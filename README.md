@@ -10,17 +10,32 @@ and grounds agent work.
 | Skill | Trigger | Purpose |
 |-------|---------|---------|
 | `sdd-init` | `/sdd-init` | Bootstrap SDD in a repo: create `specs/` (content map + ADRs) and ensure `AGENTS.md` exists with a `CLAUDE.md` symlink. |
-| `sdd-make` | `/sdd-make` | *(planned)* Author a new spec/feature on top of the SDD scaffolding. |
+| `sdd-plan` | `/sdd-plan` | Plan a feature grounded in both `specs/` and a structured user interview (one question at a time); no undocumented assumptions, and push back when answers contradict the specs. |
+| `sdd-make` | `/sdd-make` | Spec-grounded coding: read `specs/` before planning, honor it while implementing (DRY + KISS), and update `specs/` once the task is done. |
 
 ## Installation
 
-Skills are plain folders under `skills/`. Install by copying the folders you
-want into your Claude Code skills directory (`~/.claude/skills/`):
+Skills are plain folders under `skills/`. They install into your Claude Code
+skills directory (`~/.claude/skills/`).
 
 ```bash
 git clone <this-repo-url> sdd-skills
 cd sdd-skills
 
+# Install all skills
+make install
+```
+
+`make install` copies every skill into `~/.claude/skills/`. Override the
+destination with `SKILLS_DIR`:
+
+```bash
+make install SKILLS_DIR=/custom/path/skills
+```
+
+You can also copy folders by hand instead of using `make`:
+
+```bash
 # Install all skills
 cp -r skills/* ~/.claude/skills/
 
@@ -28,7 +43,7 @@ cp -r skills/* ~/.claude/skills/
 cp -r skills/sdd-init ~/.claude/skills/
 ```
 
-To pick up new versions later, re-run the copy after `git pull`.
+To pick up new versions later, re-run `make install` after `git pull`.
 
 ### Verify
 
@@ -44,7 +59,11 @@ In a Claude Code session, the skill becomes available as a slash command:
 sdd-skills/
 ├── README.md
 └── skills/
-    └── sdd-init/
+    ├── sdd-init/
+    │   └── SKILL.md
+    ├── sdd-plan/
+    │   └── SKILL.md
+    └── sdd-make/
         └── SKILL.md
 ```
 
