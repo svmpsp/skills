@@ -21,7 +21,7 @@ specs/
     ├── 0001-record-architecture-decisions.md
     ├── 0002-dev-tools-and-testing.md
     └── 0003-ci-and-release-workflow.md
-AGENTS.md                # Canonical agent/contributor guidance
+AGENTS.md                # Thin pointer to specs/ (not a duplicate of it)
 CLAUDE.md -> AGENTS.md   # Symlink (not a copy)
 ```
 
@@ -99,9 +99,27 @@ Explain the SDD layout: what `content-map.md` is for, what `adr/` is for, how th
 
 ### 5. Ensure `AGENTS.md` exists with a `CLAUDE.md` symlink
 
+   `AGENTS.md`/`CLAUDE.md` is loaded into context on every session, so keep it **as thin as possible**: it should orient the reader and point at `specs/` as the source of truth, **not** restate the project overview, commands, or conventions that the content map and ADRs already record. Anything more than orientation belongs in `specs/`, not here (see the ADR you wrote on this if the repo has one).
+
 1. Check for `AGENTS.md` at the repo root.
-   - If it exists, leave its content intact (you may suggest additions, e.g. a pointer to `specs/`).
-   - If it does not exist, create a starter `AGENTS.md` covering: project overview, build/test/run commands, code conventions, and a pointer to `specs/content-map.md` and `specs/adr/`.
+   - If it does not exist, create a minimal `AGENTS.md` — a few lines stating that the repo practices SDD and that `specs/content-map.md` (what/how) and `specs/adr/` (why) are the source of truth to read first and keep in sync. Do not duplicate their contents. For example:
+
+     ```markdown
+     # AGENTS.md
+
+     This repository practices **Spec-Driven Development (SDD)**: its `specs/`
+     directory is the single source of truth for what this project is, how it is
+     built, and why it is structured the way it is. Read it before planning or
+     changing anything, and keep it in sync when you do.
+
+     - `specs/content-map.md` — what the project is, its layout, and how to
+       build/install/test it.
+     - `specs/adr/` — the decisions behind the structure (the *why*).
+
+     Keep this file minimal: anything that belongs in the content map or an ADR
+     lives there, not here.
+     ```
+   - If it already exists, leave the user's content intact, but check whether it duplicates what `specs/` now records (overview, build/test commands, conventions). If it does, point that out: recommend slimming it to a thin pointer and migrating the substantive content into `content-map.md` or an ADR so there is a single source of truth. Make the change only with the user's go-ahead; at minimum, ensure it links to `specs/content-map.md` and `specs/adr/`.
 2. Ensure `CLAUDE.md` is a **symlink** to `AGENTS.md` (not a copy):
    - If `CLAUDE.md` does not exist: create the symlink — `ln -s AGENTS.md CLAUDE.md`.
    - If `CLAUDE.md` exists as a symlink already pointing to `AGENTS.md`: leave it.
@@ -115,5 +133,6 @@ Summarize what was created or changed, list the new files, and confirm the `CLAU
 ## Guardrails
 
 - Never overwrite existing user content (`specs/`, `AGENTS.md`, a real `CLAUDE.md` file) without confirmation.
+- Keep `AGENTS.md` minimal — a thin pointer to `specs/`, never a second copy of the overview, commands, or conventions that the content map and ADRs hold. `specs/` is the single source of truth.
 - Generated content must be grounded in the real repository — inspect first, write second.
 - Prefer creating a symlink over copying for `CLAUDE.md`; if the filesystem cannot create symlinks, surface that to the user rather than falling back to a copy silently.

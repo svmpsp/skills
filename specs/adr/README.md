@@ -35,3 +35,4 @@ alternatives weighed. ADRs are append-only history: once a decision is
 | [0001](0001-record-architecture-decisions.md) | Record architecture decisions | Accepted |
 | [0002](0002-dev-tools-and-testing.md) | Development tooling and testing | Accepted |
 | [0003](0003-ci-and-release-workflow.md) | CI and release workflow | Proposed |
+| [0004](0004-agents-md-is-a-thin-pointer.md) | AGENTS.md is a thin pointer to specs/ | Accepted |
