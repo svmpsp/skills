@@ -2,8 +2,9 @@
 
 This directory holds the **Spec-Driven Development (SDD)** artifacts for this
 repository. It was bootstrapped by the `sdd-init` skill and is consumed by the
-downstream SDD skills (`sdd-plan`, `sdd-make`), which read it before planning or
-coding and update it afterward.
+downstream SDD skills (`sdd-plan`, `sdd-make`, `sdd-scan`), which read it before
+planning, coding, or auditing — and update it afterward (`sdd-scan` only reads,
+reporting where the repo and these specs have drifted apart).
 
 ## Contents
 
