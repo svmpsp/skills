@@ -13,9 +13,12 @@ and grounds agent work.
 | `sdd-plan` | `/sdd-plan` | Plan a feature grounded in both `specs/` and a structured user interview (one question at a time); no undocumented assumptions, and push back when answers contradict the specs. |
 | `sdd-make` | `/sdd-make` | Spec-grounded coding: read `specs/` before planning, honor it while implementing (DRY + KISS), and update `specs/` once the task is done. |
 | `sdd-scan` | `/sdd-scan` | Read-only audit: scan the repo against `specs/` and report drift, ADR contradictions, and principle mismatches, ordered by criticality. Hands fixes off to `sdd-make`. |
+| `sdd-fix` | `/sdd-fix` | Debug: ground in `specs/` and git history, reproduce the bug, and prove its root cause with material evidence (artifacts kept outside the repo); no code changes without authorization. Hands the proven diagnosis to `sdd-plan`. |
 
 `sdd-init` → `sdd-plan` → `sdd-make` form the core workflow; `sdd-scan` is an
-out-of-band conformance check you run any time to catch drift.
+out-of-band conformance check you run any time to catch drift, and `sdd-fix` is
+the diagnosis entry point for a bug — it proves a root cause, then feeds it into
+`sdd-plan`.
 
 This repo also dogfoods SDD: its own [`specs/`](specs/) directory (a content map
 plus ADRs) is the source of truth for how it is structured and built.
@@ -82,7 +85,9 @@ sdd-skills/
 │   │   └── SKILL.md
 │   ├── sdd-make/
 │   │   └── SKILL.md
-│   └── sdd-scan/
+│   ├── sdd-scan/
+│   │   └── SKILL.md
+│   └── sdd-fix/
 │       └── SKILL.md
 └── specs/                # this repo's own SDD artifacts
     ├── content-map.md    # navigable index of the repo

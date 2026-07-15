@@ -10,8 +10,8 @@
 skills implementing a **Spec-Driven Development (SDD)** workflow. In SDD a
 repository's `specs/` directory (a content map plus Architecture Decision
 Records) is a first-class, maintained artifact that grounds and guides agent
-work. The repo ships four skills — `sdd-init`, `sdd-plan`, `sdd-make`, and
-`sdd-scan` — each authored as a `SKILL.md` instruction file (optionally with
+work. The repo ships five skills — `sdd-init`, `sdd-plan`, `sdd-make`, `sdd-scan`,
+and `sdd-fix` — each authored as a `SKILL.md` instruction file (optionally with
 bundled support files) and installed into a user's Claude Code skills directory.
 
 ## Top-level layout
@@ -26,6 +26,7 @@ bundled support files) and installed into a user's Claude Code skills directory.
 | `skills/sdd-plan/SKILL.md` | Plan a feature, grounded in `specs/` + a structured user interview. |
 | `skills/sdd-make/SKILL.md` | Spec-grounded coding: read specs, honor them, update them. |
 | `skills/sdd-scan/SKILL.md` | Audit the repo against `specs/`; report drift/mismatches by criticality. |
+| `skills/sdd-fix/SKILL.md` | Debug: ground in `specs/` + git history, reproduce, prove root cause, hand off to `sdd-plan`. |
 | `specs/` | SDD artifacts for *this* repo (content map + ADRs). |
 | `.gitignore` | Currently empty. |
 
@@ -46,10 +47,15 @@ there is no executable code.
   implement DRY/KISS, update specs.
 - **`sdd-scan`** — `skills/sdd-scan/SKILL.md`: a read-only audit — read specs,
   scan the repo against them, report drift/mismatches ordered by criticality.
+- **`sdd-fix`** — `skills/sdd-fix/SKILL.md`: a debugging skill — ground in specs
+  and git history, reproduce the bug, prove the root cause with material
+  evidence (artifacts kept in a scratchpad outside the repo), then hand off to
+  `sdd-plan`. Changes/commits no code without authorization.
 
 The skills form a workflow: `sdd-init` → `sdd-plan` → `sdd-make`, with
 `sdd-scan` as an out-of-band conformance check that feeds fixes back to
-`sdd-make`.
+`sdd-make`, and `sdd-fix` as the diagnosis entry point for a bug — it proves a
+root cause and feeds the proven diagnosis into `sdd-plan`.
 
 ## Build / install
 
@@ -67,8 +73,9 @@ See `Makefile:1` for the `SKILLS_DIR` default and targets.
 ## Tests
 
 There is no automated test suite. Validation is manual: install the skills and
-exercise each slash command (`/sdd-init`, `/sdd-plan`, `/sdd-make`) in a Claude
-Code session, and confirm each `SKILL.md` has valid frontmatter. See
+exercise each slash command (`/sdd-init`, `/sdd-plan`, `/sdd-make`, `/sdd-scan`,
+`/sdd-fix`) in a Claude Code session, and confirm each `SKILL.md` has valid
+frontmatter. See
 [ADR-0002](adr/0002-dev-tools-and-testing.md).
 
 ## Configuration & environment
