@@ -14,11 +14,13 @@ and grounds agent work.
 | `sdd-make` | `/sdd-make` | Spec-grounded coding: read `specs/` before planning, honor it while implementing (DRY + KISS), and update `specs/` once the task is done. |
 | `sdd-scan` | `/sdd-scan` | Read-only audit: scan the repo against `specs/` and report drift, ADR contradictions, and principle mismatches, ordered by criticality. Hands fixes off to `sdd-make`. |
 | `sdd-fix` | `/sdd-fix` | Debug: ground in `specs/` and git history, reproduce the bug, and prove its root cause with material evidence (artifacts kept outside the repo); no code changes without authorization. Hands the proven diagnosis to `sdd-plan`. |
+| `sdd-handout` | `/sdd-handout` | Hand work across a context boundary via `HANDOUT.md` (goal, key findings, next steps). If the file exists, resume the work it describes; if not, write one from the current session. |
 
 `sdd-init` → `sdd-plan` → `sdd-make` form the core workflow; `sdd-scan` is an
 out-of-band conformance check you run any time to catch drift, and `sdd-fix` is
 the diagnosis entry point for a bug — it proves a root cause, then feeds it into
-`sdd-plan`.
+`sdd-plan`. `sdd-handout` cuts across all of them: run it when a session grows
+too long, then run it again in a fresh session to pick the work back up.
 
 This repo also dogfoods SDD: its own [`specs/`](specs/) directory (a content map
 plus ADRs) is the source of truth for how it is structured and built.
@@ -87,8 +89,12 @@ sdd-skills/
 │   │   └── SKILL.md
 │   ├── sdd-scan/
 │   │   └── SKILL.md
-│   └── sdd-fix/
-│       └── SKILL.md
+│   ├── sdd-fix/
+│   │   └── SKILL.md
+│   └── sdd-handout/
+│       ├── SKILL.md
+│       └── assets/
+│           └── template.md   # canonical HANDOUT.md template
 └── specs/                # this repo's own SDD artifacts
     ├── content-map.md    # navigable index of the repo
     └── adr/              # Architecture Decision Records

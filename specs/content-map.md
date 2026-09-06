@@ -10,15 +10,16 @@
 skills implementing a **Spec-Driven Development (SDD)** workflow. In SDD a
 repository's `specs/` directory (a content map plus Architecture Decision
 Records) is a first-class, maintained artifact that grounds and guides agent
-work. The repo ships five skills — `sdd-init`, `sdd-plan`, `sdd-make`, `sdd-scan`,
-and `sdd-fix` — each authored as a `SKILL.md` instruction file (optionally with
-bundled support files) and installed into a user's Claude Code skills directory.
+work. The repo ships six skills — `sdd-init`, `sdd-plan`, `sdd-make`,
+`sdd-scan`, `sdd-fix`, and `sdd-handout` — each authored as a `SKILL.md`
+instruction file (optionally with bundled support files) and installed into a
+user's Claude Code skills directory.
 
 ## Top-level layout
 
 | Path | Purpose |
 |------|---------|
-| `README.md` | User-facing overview: the four skills, installation, and layout. |
+| `README.md` | User-facing overview: the skills, installation, and layout. |
 | `Makefile` | Install/uninstall/list skills into `~/.claude/skills/` (override with `SKILLS_DIR`). |
 | `skills/` | The skills themselves; one directory per skill. |
 | `skills/sdd-init/SKILL.md` | Bootstrap SDD scaffolding in a repo. |
@@ -27,8 +28,10 @@ bundled support files) and installed into a user's Claude Code skills directory.
 | `skills/sdd-make/SKILL.md` | Spec-grounded coding: read specs, honor them, update them. |
 | `skills/sdd-scan/SKILL.md` | Audit the repo against `specs/`; report drift/mismatches by criticality. |
 | `skills/sdd-fix/SKILL.md` | Debug: ground in `specs/` + git history, reproduce, prove root cause, hand off to `sdd-plan`. |
+| `skills/sdd-handout/SKILL.md` | Session hand-off: resume from `HANDOUT.md` if present, otherwise write one. |
+| `skills/sdd-handout/assets/template.md` | Canonical `HANDOUT.md` template the skill copies into the target repo root. |
 | `specs/` | SDD artifacts for *this* repo (content map + ADRs). |
-| `.gitignore` | Currently empty. |
+| `.gitignore` | Ignores `HANDOUT.md` — the transient session hand-off ([ADR-0006](adr/0006-handout-is-a-transient-session-bridge.md)). |
 
 ## The skills (entry points)
 
@@ -51,11 +54,19 @@ there is no executable code.
   and git history, reproduce the bug, prove the root cause with material
   evidence (artifacts kept in a scratchpad outside the repo), then hand off to
   `sdd-plan`. Changes/commits no code without authorization.
+- **`sdd-handout`** — `skills/sdd-handout/SKILL.md`: carries work across a
+  context boundary via `HANDOUT.md` at the repo root (goal, key findings, next
+  steps). Its presence selects the mode — resume the work it describes, or write
+  a new one. Bundles the handout template at `assets/template.md`; the file
+  itself is transient and gitignored
+  ([ADR-0006](adr/0006-handout-is-a-transient-session-bridge.md)).
 
 The skills form a workflow: `sdd-init` → `sdd-plan` → `sdd-make`, with
 `sdd-scan` as an out-of-band conformance check that feeds fixes back to
 `sdd-make`, and `sdd-fix` as the diagnosis entry point for a bug — it proves a
-root cause and feeds the proven diagnosis into `sdd-plan`.
+root cause and feeds the proven diagnosis into `sdd-plan`. `sdd-handout` is
+orthogonal to all of them: it spans a session boundary in whichever phase the
+work is in.
 
 ## Build / install
 
@@ -74,8 +85,8 @@ See `Makefile:1` for the `SKILLS_DIR` default and targets.
 
 There is no automated test suite. Validation is manual: install the skills and
 exercise each slash command (`/sdd-init`, `/sdd-plan`, `/sdd-make`, `/sdd-scan`,
-`/sdd-fix`) in a Claude Code session, and confirm each `SKILL.md` has valid
-frontmatter. See
+`/sdd-fix`, `/sdd-handout`) in a Claude Code session, and confirm each
+`SKILL.md` has valid frontmatter. See
 [ADR-0002](adr/0002-dev-tools-and-testing.md).
 
 ## Configuration & environment

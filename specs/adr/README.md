@@ -37,3 +37,4 @@ alternatives weighed. ADRs are append-only history: once a decision is
 | [0003](0003-ci-and-release-workflow.md) | CI and release workflow | Proposed |
 | [0004](0004-agents-md-is-a-thin-pointer.md) | AGENTS.md is a thin pointer to specs/ | Accepted |
 | [0005](0005-skill-support-files-layout.md) | Skill support files live in standard subdirectories | Accepted |
+| [0006](0006-handout-is-a-transient-session-bridge.md) | HANDOUT.md is a transient, gitignored session bridge at the repo root | Accepted |
