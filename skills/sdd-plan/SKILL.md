@@ -29,7 +29,16 @@ Before forming any plan or asking anything:
 3. Read the relevant ADRs under `specs/adr/` to learn the decisions that
    constrain the feature (framework, datastore, conventions, testing/CI). Note
    each ADR's status (Proposed vs Accepted).
-4. Read `AGENTS.md`/`CLAUDE.md` for project conventions.
+4. **Always read the tooling and CI ADRs**, whatever the task touches: the
+   dev-tools/testing ADR and the CI/release ADR (`sdd-init` seeds them as
+   `0002-dev-tools-and-testing.md` and `0003-ci-and-release-workflow.md`). In a
+   repo where components carry their own `specs/`, read the repo-root ones too.
+   Read them on every invocation — having read them in an earlier phase (a
+   `sdd-fix` that led here, or a previous session) does not count. They say how
+   the work will be verified — the exact format/lint/type-check/test/build
+   commands CI runs, the test conventions, and how dependencies and lockfiles
+   are managed — so the plan can name them.
+5. Read `AGENTS.md`/`CLAUDE.md` for project conventions.
 
 The specs answer questions you would otherwise have to ask. Mine them first so
 the interview covers only what is genuinely undecided.
@@ -92,7 +101,8 @@ Once the assumptions are resolved, write the plan. It should include:
 - **Steps** — an ordered, concrete plan a coder (or `sdd-make`) can execute.
 - **Open questions / assumed defaults** — anything still unresolved, stated
   plainly rather than buried.
-- **Acceptance criteria** — how "done" is judged.
+- **Acceptance criteria** — how "done" is judged, including the verification
+  commands the tooling and CI ADRs prescribe for every touched component.
 
 Do not begin implementation here — this skill plans; `sdd-make` builds. Hand the
 plan off and let the user confirm it.
@@ -100,6 +110,7 @@ plan off and let the user confirm it.
 ## Guardrails
 
 - Read the specs before interviewing; never ask what the specs already answer.
+- Always read the tooling and CI ADRs, every invocation.
 - No undocumented assumptions in the plan — resolve each by spec citation or by
   asking the user.
 - Exactly one question per turn, always with context. Never a wall of questions.

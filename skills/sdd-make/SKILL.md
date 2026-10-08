@@ -31,7 +31,17 @@ Before planning or writing any code:
 3. Read the relevant ADRs under `specs/adr/`. Pay attention to decisions that
    constrain the task: framework choices, datastore, conventions, testing and
    CI approach. Note the status of each (Proposed vs Accepted).
-4. Read `AGENTS.md`/`CLAUDE.md` for project conventions.
+4. **Always read the tooling and CI ADRs**, whatever the task touches: the
+   dev-tools/testing ADR and the CI/release ADR (`sdd-init` seeds them as
+   `0002-dev-tools-and-testing.md` and `0003-ci-and-release-workflow.md`). In a
+   repo where components carry their own `specs/`, read the repo-root ones too.
+   Read them on every invocation — having read them in an earlier phase (the
+   `sdd-plan` that produced this task, or a previous session) does not count.
+   They say how a change is verified — the exact
+   format/lint/type-check/test/build commands CI runs, the test conventions
+   (structure, naming, docstrings), and how dependencies and lockfiles are
+   managed.
+5. Read `AGENTS.md`/`CLAUDE.md` for project conventions.
 
 Never start planning from a blank slate when a content map exists — use it to
 ground yourself in how *this* repo is actually organized.
@@ -103,8 +113,11 @@ Also:
 - Match the surrounding code's style, naming, and idioms.
 - Handle errors and edge cases deliberately, not as an afterthought.
 - Keep changes focused on the task; don't bundle unrelated refactors.
-- Follow the testing approach recorded in the ADRs: add or update tests and run
-  them (plus lint/format) using the commands the specs document.
+- Follow the testing approach recorded in the tooling ADR: add or update tests
+  in its conventions, then verify every touched component with the same
+  commands CI runs (per the CI ADR) — not a bare test run. If a build step
+  rewrites a generated file such as a lockfile, keep the change and regenerate
+  it the documented way; never revert it or wave it off as pre-existing.
 
 Note that DRY and KISS can pull in opposite directions — don't manufacture a
 shared abstraction just to remove a little duplication if it makes the code
@@ -138,6 +151,8 @@ paths). If you deliberately left specs untouched, say so and why.
 ## Guardrails
 
 - Reading the specs is not optional — do it before planning, every time.
+- Always read the tooling and CI ADRs, every invocation, and verify with the
+  commands they prescribe before calling the work done.
 - Explain a change in your report, the commit message, or an ADR — never in code
   comments. Comments that justify a fix are a defect in the change, not a
   courtesy; if you catch yourself writing one, delete it and move the content to
