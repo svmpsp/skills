@@ -36,7 +36,15 @@ Before investigating anything:
 3. Read the relevant ADRs under `specs/adr/`. The *intended* design is your
    baseline for "correct": a bug is a divergence from what the specs say should
    happen. Note each ADR's status (Proposed vs Accepted).
-4. Read `AGENTS.md`/`CLAUDE.md` for project conventions.
+4. **Always read the tooling and CI ADRs**, whatever the task touches: the
+   dev-tools/testing ADR and the CI/release ADR (`sdd-init` seeds them as
+   `0002-dev-tools-and-testing.md` and `0003-ci-and-release-workflow.md`). In a
+   repo where components carry their own `specs/`, read the repo-root ones too.
+   Read them on every invocation — having read them in an earlier phase (a
+   previous session) does not count. They say how the project is built, tested
+   and run — the commands and environment a faithful reproduction must use, and
+   what CI actually executes.
+5. Read `AGENTS.md`/`CLAUDE.md` for project conventions.
 
 The specs tell you how the system is *supposed* to behave. You cannot recognize
 a root cause without that baseline.
@@ -74,7 +82,8 @@ example** before proposing any root cause:
 
 1. Write a reproduction that fails reliably — a script, a failing test, a
    sequence of commands — and keep it in the scratchpad. Prefer the smallest
-   input that still triggers the failure.
+   input that still triggers the failure. Run it with the commands and
+   environment the tooling and CI ADRs prescribe, so it fails the way CI would.
 2. Run it and **capture the actual output** (error, stack trace, wrong result).
    Save that output as evidence alongside the script.
 3. Confirm it is deterministic: it should fail every run, and pass in the
@@ -155,6 +164,7 @@ one-liner" — without explicit user authorization to leave the diagnosis phase.
 ## Guardrails
 
 - Read the specs first; they are your baseline for correct behavior.
+- Always read the tooling and CI ADRs, every invocation.
 - Never advance a cause you have not tested — material evidence over reasoning,
   every time. A reproduction is required before a root-cause claim.
 - Never edit repo files or commit without explicit authorization. This skill
