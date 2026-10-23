@@ -98,6 +98,8 @@ Once the assumptions are resolved, write the plan. It should include:
 - **Scope and non-goals** — explicitly in and out.
 - **Approach** — the implementation strategy, consistent with the ADRs; note
   any spec deviation agreed during the interview and that it needs a new ADR.
+  Plan a `content-map.md` edit only if the feature adds or removes a component
+  or changes a component's goal — never to record its internals.
 - **Steps** — an ordered, concrete plan a coder (or `sdd-make`) can execute.
 - **Open questions / assumed defaults** — anything still unresolved, stated
   plainly rather than buried.

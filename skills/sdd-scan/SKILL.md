@@ -26,8 +26,8 @@ Before inspecting any code:
 
 1. Confirm `specs/` exists. If it does not, there is nothing to scan against —
    tell the user and offer to run `sdd-init` first.
-2. Read `specs/content-map.md` — the claimed structure, entry points, build/
-   install/test commands, and where things live.
+2. Read `specs/content-map.md` — the claimed components and their purposes,
+   and the top-level build/install/test commands.
 3. Read every ADR under `specs/adr/`, noting each one's **status** (Proposed vs
    Accepted vs Superseded). Accepted ADRs are binding claims about how the repo
    is built; Proposed ones are open questions.
@@ -41,9 +41,15 @@ These documents are the *expected* state. The rest of the scan compares the
 Inspect the real contents (file tree, manifests, configs, CI, source) and look
 for divergence from what you read in phase 1. Check at least these axes:
 
-- **Structural drift** — does the content map still match the tree? Files,
-  directories, modules, or entry points it names that are **missing, moved, or
-  renamed**; significant components that **exist but are undocumented**.
+- **Structural drift** — does the content map still match the tree at
+  **component level**? Components it names that are **missing, moved, or
+  renamed**; components that **exist but are not indexed**; component purposes
+  that no longer match what the component does. A submodule, file, or helper
+  absent from the map is **not** drift — the map is a table of contents and
+  must not list a component's internals.
+- **Over-detailed content map** — the map lists submodules, subpackages, files
+  inside a component, `path:line` references, or implementation details. Flag
+  it; the fix is always to remove that detail, never to keep it current.
 - **Command drift** — do the documented build/install/test/run commands still
   exist and work as described (targets in the Makefile, scripts in the
   manifest, CI invocations)?
@@ -80,7 +86,8 @@ on the specs or how directly it breaks a binding decision:
   ADR is in fact already decided. The picture is incomplete in a way that will
   bite.
 - **Medium** — real but contained drift or a principle smell: minor structural
-  mismatch, localized duplication, an `AGENTS.md` drifting past "thin."
+  mismatch, localized duplication, an `AGENTS.md` drifting past "thin," a
+  content map carrying component internals.
 - **Low** — nits and polish: stale wording, a slightly outdated reference, small
   inconsistencies.
 

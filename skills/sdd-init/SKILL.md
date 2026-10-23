@@ -14,7 +14,7 @@ After this skill runs, the repository contains:
 ```
 specs/
 ├── README.md            # Explains the SDD layout and how to maintain it
-├── content-map.md       # A navigable map of the repository
+├── content-map.md       # Component-level index of the repository
 └── adr/
     ├── README.md        # ADR index + how to add a new ADR
     ├── template.md      # ADR template for future decisions
@@ -42,16 +42,15 @@ Work through these steps in order. Do not skip the inspection step — the gener
 
 ### 2. Create `specs/content-map.md`
 
-A content map is a high-signal index that lets a human or agent navigate the repo quickly. Generate it from your actual inspection. Include:
+A content map is a **table of contents** for the repo: one entry per **component** (a top-level unit with its own purpose — an app, service, package, or top-level directory), saying where it is and what it is for. Generate it from your actual inspection. Include only:
 
 - A one-paragraph description of what the project does.
-- A table or annotated tree of top-level directories with a one-line purpose each.
-- Key entry points (main files, CLI commands, server bootstrap) with `path:line` references where useful.
-- Where tests live and the command to run them.
+- A table of components: path and a one-line purpose each.
+- The top-level commands to build/install and test the project.
 - Where configuration and environment setup live.
 - Pointers to deeper docs (including `specs/adr/`).
 
-Keep it concise and maintainable — it is an index, not a duplicate of the code. Note at the top that it should be updated as the repo evolves.
+It must **never** list a component's internals: no submodules or subpackages, no files inside a component, no `path:line` references, no implementation details. Navigation *within* a component is the code's job. Note at the top that the map changes only when a component is added or removed, or a component's goal or high-level description changes — nothing else.
 
 ### 3. Create the ADR structure under `specs/adr/`
 
@@ -70,7 +69,7 @@ ADRs (Architecture Decision Records) capture *why* significant decisions were ma
 
 ### 4. Write `specs/README.md`
 
-Explain the SDD layout: what `content-map.md` is for, what `adr/` is for, how the two relate, and the expectation that these are kept in sync with the code. Mention that this directory was bootstrapped by `sdd-init` and is consumed by downstream SDD skills.
+Explain the SDD layout: what `content-map.md` is for (a component-level index, edited only when a component is added/removed or its purpose changes), what `adr/` is for, how the two relate, and the expectation that these are kept in sync with the code. Mention that this directory was bootstrapped by `sdd-init` and is consumed by downstream SDD skills.
 
 ### 5. Ensure `AGENTS.md` exists with a `CLAUDE.md` symlink
 
@@ -110,4 +109,5 @@ Summarize what was created or changed, list the new files, and confirm the `CLAU
 - Never overwrite existing user content (`specs/`, `AGENTS.md`, a real `CLAUDE.md` file) without confirmation.
 - Keep `AGENTS.md` minimal — a thin pointer to `specs/`, never a second copy of the overview, commands, or conventions that the content map and ADRs hold. `specs/` is the single source of truth.
 - Generated content must be grounded in the real repository — inspect first, write second.
+- Keep `content-map.md` at component level — a table of contents, never a list of submodules, files, or implementation details.
 - Prefer creating a symlink over copying for `CLAUDE.md`; if the filesystem cannot create symlinks, surface that to the user rather than falling back to a copy silently.

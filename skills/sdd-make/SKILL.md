@@ -26,8 +26,8 @@ Before planning or writing any code:
 1. Confirm `specs/` exists. If it does not, this repo is not SDD-bootstrapped —
    tell the user and offer to run `sdd-init` first, or proceed as a plain
    coding task with their go-ahead.
-2. Read `specs/content-map.md` to locate the parts of the repo the task
-   touches — entry points, relevant modules, test layout, config.
+2. Read `specs/content-map.md` to locate the components the task touches, then
+   explore inside them in the code itself — the map stops at component level.
 3. Read the relevant ADRs under `specs/adr/`. Pay attention to decisions that
    constrain the task: framework choices, datastore, conventions, testing and
    CI approach. Note the status of each (Proposed vs Accepted).
@@ -67,7 +67,8 @@ ground yourself in how *this* repo is actually organized.
 Write code that fits the existing codebase and holds these three directives:
 
 - **DRY (Don't Repeat Yourself).** Before adding code, look for existing
-  helpers, utilities, and patterns (the content map helps you find them).
+  helpers, utilities, and patterns in the components the content map points
+  you to.
   Reuse and extend rather than copy-paste. Factor genuine duplication into a
   single well-named place — but don't over-abstract a coincidence.
 - **KISS (Keep It Simple).** Prefer the simplest solution that fully solves the
@@ -128,9 +129,14 @@ harder to follow. When they conflict, favor the simpler, clearer code.
 After the task is complete and verified, bring `specs/` back in sync so the
 next agent inherits an accurate picture:
 
-1. **`content-map.md`** — update it if the change altered the repo's structure:
-   new modules/directories/entry points, moved or removed components, new test
-   locations or run commands. Keep it a concise index, not a changelog.
+1. **`content-map.md`** — it is a table of contents of the repo's
+   **components**, not of their contents. Edit it **only** if the change added
+   or removed a component, or changed a component's goal or high-level
+   description. New modules, files, helpers, or tests inside an existing
+   component, refactors, and bug fixes leave it untouched. Never add
+   submodules, subpackages, file lists, `path:line` references, or
+   implementation details to it; if you find any there, remove them rather
+   than extend them.
 2. **ADRs** — if the work made or changed an architectural decision:
    - Add a new ADR (next `NNNN`) using `specs/adr/template.md` for a new
      decision.
@@ -159,6 +165,8 @@ paths). If you deliberately left specs untouched, say so and why.
   wherever it belongs.
 - Never silently contradict an Accepted ADR; surface the conflict and let the
   decision be recorded.
+- The content map is a component-level index: touch it only when a component
+  is added or removed or its purpose changes, and never put internals in it.
 - Don't let the spec-update phase invent decisions that weren't actually made —
   record what happened, grounded in the real change.
 - Spec updates are part of "done"; a task that changed structure or decisions

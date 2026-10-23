@@ -11,7 +11,7 @@ these specs have drifted apart).
 
 | Path | What it is |
 |------|------------|
-| [`content-map.md`](content-map.md) | A high-signal, navigable index of the repository — what it does, its top-level layout, entry points, how it's built/installed, and where to find deeper docs. |
+| [`content-map.md`](content-map.md) | A component-level table of contents — what the project does, its components and their purpose, how it's built/installed, and where to find deeper docs. Never a component's internals. |
 | [`adr/`](adr/) | Architecture Decision Records: the *why* behind significant decisions, plus a [template](adr/template.md) and an [index](adr/README.md). |
 
 ## How they relate
@@ -29,8 +29,9 @@ grounded in them, and implementation honors them.
 These artifacts are only useful if they stay true. Treat them as part of the
 code:
 
-- When you add/rename/remove a skill or top-level file, or change the
-  build/install flow, update `content-map.md` in the same change.
+- Update `content-map.md` only when a component is added or removed, or a
+  component's goal or high-level description changes — nothing else
+  ([ADR-0007](adr/0007-content-map-is-a-component-index.md)).
 - When you make a significant decision, add an ADR (see
   [`adr/README.md`](adr/README.md)).
 
