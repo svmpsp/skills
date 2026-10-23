@@ -1,14 +1,19 @@
 ---
 name: sdd-scan
-description: Spec-conformance audit skill for Spec-Driven Development (SDD). Reads the repository's specs/ (content map + ADRs) as the source of truth, then scans the actual repo contents for drift, contradictions, and gaps against that recorded knowledge. Produces a read-only report of findings ordered by criticality — it diagnoses, it does not fix. Use when the user runs /sdd-scan or asks to audit, scan, or check a repo against its specs, find spec drift, or flag mismatches between the code and its guiding principles.
+description: Spec-conformance audit skill for Spec-Driven Development (SDD). Reads the repository's specs/ (content map + ADRs), then scans the actual repo — the source of truth — for drift, contradictions, and gaps between the code and that recorded knowledge, including stale or misused ADRs. Produces a read-only report of findings ordered by criticality — it diagnoses, it does not fix. Use when the user runs /sdd-scan or asks to audit, scan, or check a repo against its specs, find spec drift, or flag mismatches between the code and its guiding principles.
 ---
 
 # sdd-scan
 
-The audit skill of the SDD workflow. It treats `specs/` (the content map and
-ADRs created by `sdd-init`) as the source of truth and checks the **actual
-repository** against it, surfacing where the two have drifted apart and where
-the code violates the principles the specs record.
+The audit skill of the SDD workflow. It compares `specs/` (the content map and
+ADRs created by `sdd-init`) with the **actual repository**, surfacing where the
+two have drifted apart and where the code violates the principles the specs
+record.
+
+The **code is the source of truth.** The specs are only useful while they
+describe it, so most drift is resolved by rewriting or deleting the spec — not
+by bending the code. Code that genuinely strayed from a still-valid design is
+the exception, and the user decides it.
 
 This skill is **read-only**: it diagnoses and reports, it does not edit code or
 specs. Its output is a prioritized report. When the user wants the findings
@@ -26,33 +31,42 @@ Before inspecting any code:
 
 1. Confirm `specs/` exists. If it does not, there is nothing to scan against —
    tell the user and offer to run `sdd-init` first.
-2. Read `specs/content-map.md` — the claimed structure, entry points, build/
-   install/test commands, and where things live.
-3. Read every ADR under `specs/adr/`, noting each one's **status** (Proposed vs
-   Accepted vs Superseded). Accepted ADRs are binding claims about how the repo
-   is built; Proposed ones are open questions.
+2. Read `specs/content-map.md` — the claimed components and their purposes,
+   and the top-level build/install/test commands.
+3. Read every ADR under `specs/adr/`, noting each one's **status**. Accepted
+   ADRs claim "the system works this way, for this reason"; Proposed ones
+   describe intent not yet in place.
 4. Read `AGENTS.md`/`CLAUDE.md` for the conventions the repo claims to hold.
 
-These documents are the *expected* state. The rest of the scan compares the
-*actual* repo against them.
+These documents are claims about the repo. The rest of the scan checks each
+claim against the code and config.
 
 ### 2. Scan the repo against the specs
 
 Inspect the real contents (file tree, manifests, configs, CI, source) and look
 for divergence from what you read in phase 1. Check at least these axes:
 
-- **Structural drift** — does the content map still match the tree? Files,
-  directories, modules, or entry points it names that are **missing, moved, or
-  renamed**; significant components that **exist but are undocumented**.
+- **Structural drift** — does the content map still match the tree at
+  **component level**? Components it names that are **missing, moved, or
+  renamed**; components that **exist but are not indexed**; component purposes
+  that no longer match what the component does. A submodule, file, or helper
+  absent from the map is **not** drift — the map is a table of contents and
+  must not list a component's internals.
+- **Over-detailed content map** — the map lists submodules, subpackages, files
+  inside a component, `path:line` references, or implementation details. Flag
+  it; the fix is always to remove that detail, never to keep it current.
 - **Command drift** — do the documented build/install/test/run commands still
   exist and work as described (targets in the Makefile, scripts in the
   manifest, CI invocations)?
-- **ADR contradictions** — does the code contradict an **Accepted** ADR
-  (a different framework/datastore/tool than the one decided, a convention the
-  ADR forbids, a structure it rules out)?
-- **Stale decisions** — ADRs marked **Proposed** that the repo has since
-  actually implemented (they should be Accepted), or **Accepted** ADRs the repo
-  has outgrown or now contradicts (they may need superseding).
+- **Stale ADRs** — an **Accepted** ADR the code contradicts (a different
+  framework/datastore/tool, a convention it no longer follows, a structure it
+  has moved past); a **Proposed** ADR the repo has since implemented; an ADR
+  for a decision that no longer applies. The fix is to rewrite or delete the
+  ADR so it matches the code.
+- **Misused ADRs** — an ADR that records a bug fix, refactor, or routine
+  change instead of a design decision (delete it; its story belongs in git),
+  or that pins a software version instead of naming the config file that pins
+  it (replace the version with that pointer).
 - **Principle mismatches** — violations of the guiding principles the specs
   state: DRY (genuine duplication that a documented helper/pattern should
   cover), KISS (needless complexity), and any repo-specific rules (e.g.
@@ -62,25 +76,26 @@ for divergence from what you read in phase 1. Check at least these axes:
   **no spec coverage** at all (a whole service, datastore, or auth scheme the
   ADRs never mention).
 
-Ground every finding in evidence: cite the spec location (content-map section
-or ADR number) and the concrete repo location (`path:line`) that disagree with
-it. Do not report a "finding" you cannot point at in both places — and do not
+Ground every finding in evidence: cite the concrete repo location
+(`path:line`) and the spec location (content-map section or ADR number) that
+disagree with it. Lead with the code; the spec is the claim being tested. Do not report a "finding" you cannot point at in both places — and do not
 invent problems to pad the report.
 
 ### 3. Prioritize by criticality
 
-Assign each finding a severity, judged by how badly it misleads someone relying
-on the specs or how directly it breaks a binding decision:
+Assign each finding a severity, judged by how badly it misleads someone reading
+the specs:
 
-- **Critical** — the spec actively misleads or a binding rule is broken: a
-  documented command that fails, content-map pointers to things that no longer
-  exist, or code that contradicts an **Accepted** ADR. Acting on the specs here
-  produces wrong results.
-- **High** — a significant component or decision is undocumented, or a Proposed
-  ADR is in fact already decided. The picture is incomplete in a way that will
-  bite.
+- **Critical** — acting on the specs produces wrong results: a documented
+  command that fails, content-map pointers to things that no longer exist, an
+  Accepted ADR describing a design the code has abandoned.
+- **High** — a significant component or design decision is undocumented, or a
+  Proposed ADR is in fact already in place. The picture is incomplete in a way
+  that will bite.
 - **Medium** — real but contained drift or a principle smell: minor structural
-  mismatch, localized duplication, an `AGENTS.md` drifting past "thin."
+  mismatch, localized duplication, an `AGENTS.md` drifting past "thin," a
+  content map carrying component internals, an ADR that records a bug fix or
+  pins a version.
 - **Low** — nits and polish: stale wording, a slightly outdated reference, small
   inconsistencies.
 
@@ -101,24 +116,27 @@ then the details.
 |---|----------|------|---------|
 | 1 | Critical | content-map | `make test` documented but no such target |
 | 2 | High     | ADR-0003    | CI workflow exists; ADR still marked Proposed |
+| 3 | Medium   | ADR-0002    | Pins Python 3.11; `.tool-versions` pins 3.12  |
 | … |          |             |                                               |
 
 ## Findings
 
 ### 1. [Critical] <short title>
-- **Spec says:** <claim> (`specs/content-map.md` §… / ADR-NNNN)
 - **Repo shows:** <reality> (`path:line`)
+- **Spec says:** <claim> (`specs/content-map.md` §… / ADR-NNNN)
 - **Why it matters:** <impact on someone trusting the specs>
-- **Suggested fix:** update the spec to match reality, or change the code to
-  honor the spec, or record a new/superseding ADR — say which.
+- **Suggested fix:** rewrite or delete the spec to match the code, or — if
+  the code strayed from a design that still holds — change the code. Say
+  which.
 
 ### 2. [High] …
 ```
 
-For each finding, name the likely correct resolution but stay neutral on
-*which side is wrong*: drift can mean the spec is stale **or** the code has
-strayed — the suggested fix should make that choice explicit, not assume the
-code is always right.
+For each finding, name the likely resolution explicitly. Default to the code:
+specs that lag behind the system get rewritten or deleted. Suggest changing
+the code only when it clearly strayed from a design that still holds, and let
+the user decide. Never suggest a new ADR for a bug fix, and mark any new ADR as
+needing the user's confirmation.
 
 If the scan finds nothing, say so plainly and report the repo as in sync with
 its specs; do not manufacture findings.
@@ -131,13 +149,14 @@ this skill.
 
 ## Guardrails
 
-- Read the specs before scanning; the specs define "expected," the repo is
-  "actual."
+- Read the specs before scanning, then test each of their claims against the
+  repo. The code is the source of truth.
 - Read-only: never edit code or specs in this skill. Diagnose and report;
   hand fixes to `sdd-make`.
-- Every finding cites both sides — the spec claim and the repo evidence
-  (`path:line`). No unsourced findings, no padding.
+- Every finding cites both sides — the repo evidence (`path:line`) and the
+  spec claim. No unsourced findings, no padding.
 - Order strictly by criticality, and don't inflate severity; an honest "in
   sync" is a valid result.
-- Drift is symmetric: the spec may be stale or the code may have strayed. Make
-  the suggested resolution explicit rather than assuming one side.
+- Drift usually means the spec is stale: suggest rewriting or deleting it.
+  Suggest changing the code only when it strayed from a design that still
+  holds, and say so explicitly.

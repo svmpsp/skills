@@ -38,7 +38,7 @@ left as `Proposed` until adopted:
 - Tagging releases gives users a stable ref to pin to and a changelog anchor.
 - Until the workflow is added, correctness relies entirely on review and manual
   testing — this ADR should move to `Accepted` when the CI workflow lands, or
-  be superseded if a different approach is chosen.
+  be rewritten if a different approach is chosen.
 
 ## Alternatives considered
 
