@@ -11,9 +11,9 @@ hard way, and what was about to happen next. This skill writes that — and only
 that — into `HANDOUT.md` at the repository root, so a fresh session can pick the
 work up without re-deriving it.
 
-The handout is a **bridge, not a source of truth**. `specs/` (the content map
-and ADRs) remains binding; the handout records the *in-flight* state of one task
-against those specs.
+The handout is a **bridge, not a source of truth**. The code is the source of
+truth, with `specs/` (the content map and ADRs) as its durable context; the
+handout records the *in-flight* state of one task.
 
 `HANDOUT.md` is transient and should not be committed. Delete it once its work is done.
 
@@ -33,7 +33,7 @@ silently discard an unfinished handout.
 1. Read `HANDOUT.md` in full.
 2. Read the specs it is grounded in: `specs/content-map.md` and the ADRs the
    handout cites, plus `AGENTS.md`/`CLAUDE.md`. Do this even though the handout
-   summarizes them — the handout is a bridge, and the specs are the authority.
+   summarizes them — the handout is a bridge, and the repo outlives it.
 3. Verify the handout against reality before acting on it. It was written by an
    earlier session and the tree may have moved: confirm the files it names still
    exist, check `git log`/`git status` for changes since it was written, and
@@ -56,9 +56,9 @@ Fill each section with what a fresh session needs and nothing else:
 
 - **Goal** — what this session is trying to achieve, in one or two sentences,
   plus the definition of done. Not a transcript of what was discussed.
-- **Grounding** — the specs this work is bound by: the content-map sections and
-  the ADRs (by number and title) that constrain it, and any conflict already
-  surfaced with the user.
+- **Grounding** — the components and code paths this work touches, the ADRs
+  (by number and title) that explain the relevant design, any ADR already found
+  stale, and any design change already agreed with the user.
 - **Key findings** — what was learned that a new session cannot cheaply
   rediscover: the root cause found, the approach chosen and the ones rejected
   (with why), decisions the user made, constraints hit. Anchor each to
@@ -88,8 +88,9 @@ Aim for one screen — a page at most. Rules of thumb:
 
 - Check for `HANDOUT.md` before anything else; its presence, not the phrasing of
   the request, selects the mode.
-- The handout never replaces the specs. Resume mode reads `specs/` too, and a
-  handout that contradicts an Accepted ADR is wrong — surface it.
+- The handout never replaces the code or the specs. Resume mode reads
+  `specs/` too, and a handout that contradicts the code is stale — surface
+  it.
 - Record only what the session actually established. Do not invent next steps,
   and label unproven claims as hypotheses.
 - Never write the handout into `specs/` or commit it; it is a transient root

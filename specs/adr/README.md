@@ -6,27 +6,38 @@ the lightweight format from [ADR-0001](0001-record-architecture-decisions.md).
 
 ## What an ADR is
 
-An ADR records a single architecturally significant decision: the context and
-forces at play, the decision made (in active voice), its consequences, and the
-alternatives weighed. ADRs are append-only history: once a decision is
-**Accepted** you don't rewrite it — you add a new ADR that supersedes it.
+An ADR records a single **design decision**: the context and forces at play,
+the decision made (in active voice), its consequences, and the alternatives
+weighed. The code is the source of truth; an ADR only explains *why* it is
+shaped that way ([ADR-0001](0001-record-architecture-decisions.md)).
+
+An ADR is **not**:
+
+- a record of a bug fix, refactor, or routine change — that is the commit
+  message;
+- a place to pin a version — name the config file that pins it instead;
+- permanent — when the system evolves, rewrite the ADR to match the current
+  decision, or delete it if the decision no longer applies. Git keeps the
+  history.
 
 ## Conventions
 
 - **Filename:** `NNNN-kebab-title.md`, where `NNNN` is a zero-padded,
-  **monotonically increasing** number (the next free integer).
+  **monotonically increasing** number (the next free integer; numbers of
+  deleted ADRs are not reused).
 - **Template:** copy [`template.md`](template.md) for new records.
-- **Lifecycle / status:** `Proposed` → `Accepted` → `Deprecated` or
-  `Superseded by [ADR-XXXX](...)`. Record the status in the header.
-- **Index:** add new ADRs to the list below in the same change.
+- **Status:** `Proposed` (not yet in place) or `Accepted` (the system works
+  this way). Record it in the header.
+- **Index:** keep the list below in sync in the same change.
 
 ## How to add a new ADR
 
-1. Copy `template.md` to `NNNN-your-title.md` using the next number.
-2. Fill in Status, Date, Deciders, and the four sections.
-3. Add a row to the index below.
-4. If it changes the repo's structure or workflow, also update
-   [`../content-map.md`](../content-map.md).
+1. Confirm with the user that the decision deserves an ADR.
+2. Copy `template.md` to `NNNN-your-title.md` using the next number.
+3. Fill in Status, Date, Deciders, and the four sections.
+4. Add a row to the index below.
+5. If it adds or removes a component or changes a component's purpose, also
+   update [`../content-map.md`](../content-map.md).
 
 ## Index
 

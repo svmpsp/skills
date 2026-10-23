@@ -1,6 +1,6 @@
 # NNNN. <Short title of decision>
 
-- **Status:** Proposed | Accepted | Deprecated | Superseded by [ADR-XXXX](XXXX-...)
+- **Status:** Proposed | Accepted
 - **Date:** YYYY-MM-DD
 - **Deciders:** <who made the call>
 
@@ -11,7 +11,8 @@ business, team)? State facts, not opinions.
 
 ## Decision
 
-The change we are making, stated in active voice: "We will ...".
+The change we are making, stated in active voice: "We will ...". Name the
+config file where a version is pinned; never pin the version here.
 
 ## Consequences
 

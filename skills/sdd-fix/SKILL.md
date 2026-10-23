@@ -33,21 +33,22 @@ Before investigating anything:
 2. Read `specs/content-map.md` to locate the parts of the repo the bug touches —
    entry points, the modules involved, where tests and config live, how the
    project is built and run.
-3. Read the relevant ADRs under `specs/adr/`. The *intended* design is your
-   baseline for "correct": a bug is a divergence from what the specs say should
-   happen. Note each ADR's status (Proposed vs Accepted).
+3. Read the relevant ADRs under `specs/adr/` for the reasoning behind the code
+   you are investigating. They help you tell intended behavior from accident,
+   but they may be stale — the code, its tests, and the user's report of what
+   should happen are the stronger evidence.
 4. **Always read the tooling and CI ADRs**, whatever the task touches: the
    dev-tools/testing ADR and the CI/release ADR (`sdd-init` seeds them as
    `0002-dev-tools-and-testing.md` and `0003-ci-and-release-workflow.md`). In a
    repo where components carry their own `specs/`, read the repo-root ones too.
    Read them on every invocation — having read them in an earlier phase (a
-   previous session) does not count. They say how the project is built, tested
-   and run — the commands and environment a faithful reproduction must use, and
-   what CI actually executes.
+   previous session) does not count. They point to how the project is built,
+   tested and run. Confirm the commands and environment in the config they
+   point at — a faithful reproduction uses what CI actually executes.
 5. Read `AGENTS.md`/`CLAUDE.md` for project conventions.
 
-The specs tell you how the system is *supposed* to behave. You cannot recognize
-a root cause without that baseline.
+The specs help you understand how the system is *meant* to behave; the code
+shows how it does. You need both to recognize a root cause.
 
 ### 2. Understand the report and set up a workspace
 
@@ -83,7 +84,7 @@ example** before proposing any root cause:
 1. Write a reproduction that fails reliably — a script, a failing test, a
    sequence of commands — and keep it in the scratchpad. Prefer the smallest
    input that still triggers the failure. Run it with the commands and
-   environment the tooling and CI ADRs prescribe, so it fails the way CI would.
+   environment CI uses, so it fails the way CI would.
 2. Run it and **capture the actual output** (error, stack trace, wrong result).
    Save that output as evidence alongside the script.
 3. Confirm it is deterministic: it should fail every run, and pass in the
@@ -105,9 +106,10 @@ Work from the reproduction to the underlying cause. Do not stop at the symptom.
 3. Iterate until you reach the **root cause** — the actual defect, not a
    downstream effect — and can point to it at `path:line`. Distinguish the root
    cause from contributing factors and from the symptom.
-4. Where it helps, note whether the bug contradicts an Accepted ADR or the
-   content map (the code strayed from the design) or whether the spec itself is
-   wrong/outdated (the design was flawed) — that distinction shapes the fix.
+4. Where it helps, note whether the bug is the code straying from a design
+   that still holds, or a flaw in the design itself. Only the second could ever
+   warrant an ADR change — a bug fix on its own never does. If you find an ADR
+   that is simply stale, mention it for later sync.
 
 Every step here is backed by something you ran. Material evidence — a failing
 reproduction, captured output, a probe result — is the standard; reasoning
@@ -136,8 +138,9 @@ reference them by path.
 <evidence that proves it — what you ran and what it showed>
 
 ## Grounding
-- Specs relied on: <content-map §… / ADR-NNNN>
-- Design divergence: <code strayed from spec | spec is outdated | neither>
+- Code and config examined: <paths>
+- Design: <code strayed from a valid design | design is flawed | neither>
+- Stale specs noticed: <ADR-NNNN / content-map § — or "none">
 
 ## Contributing factors / ruled out
 <hypotheses tested and killed, so the next agent doesn't re-tread them>
@@ -163,7 +166,8 @@ one-liner" — without explicit user authorization to leave the diagnosis phase.
 
 ## Guardrails
 
-- Read the specs first; they are your baseline for correct behavior.
+- Read the specs first for context; the code, its tests, and the reported
+  expectation are the baseline for correct behavior.
 - Always read the tooling and CI ADRs, every invocation.
 - Never advance a cause you have not tested — material evidence over reasoning,
   every time. A reproduction is required before a root-cause claim.

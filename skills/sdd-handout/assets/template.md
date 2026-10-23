@@ -1,7 +1,8 @@
 # Handout: <short title of the work>
 
-> Session hand-off. Transient — delete once this work is done. `specs/` remains
-> the source of truth; where this document and the specs disagree, surface the disagreement.
+> Session hand-off. Transient — delete once this work is done. The code and
+> `specs/` outlive it; where this document and the repo disagree, surface the
+> disagreement.
 
 **Written:** <YYYY-MM-DD> · **Last updated:** <YYYY-MM-DD>
 
@@ -13,9 +14,9 @@
 
 ## Grounding
 
-- Content map: <sections relied on>
+- Code: <components and paths this work touches>
 - ADRs: <NNNN — title (status)>
-- Conflicts surfaced: <ADR/spec tension raised with the user, or "none">
+- Design changes agreed / stale specs found: <or "none">
 
 ## Key findings
 

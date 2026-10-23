@@ -21,8 +21,9 @@ these specs have drifted apart).
 - The **ADRs** answer *"why is it this way?"* — they record the decisions that
   produced the structure the content map describes.
 
-Together they are the binding context for agent work in this repo: planning is
-grounded in them, and implementation honors them.
+Neither replaces the code, which is the source of truth for what the system
+does. The specs are context: they orient an agent and explain the reasoning,
+and when they disagree with the code they are usually the thing that is stale.
 
 ## Keeping specs in sync
 
@@ -32,7 +33,9 @@ code:
 - Update `content-map.md` only when a component is added or removed, or a
   component's goal or high-level description changes — nothing else
   ([ADR-0007](adr/0007-content-map-is-a-component-index.md)).
-- When you make a significant decision, add an ADR (see
-  [`adr/README.md`](adr/README.md)).
+- When you make a design decision, propose an ADR and write it once the user
+  confirms (see [`adr/README.md`](adr/README.md)). Bug fixes and version bumps
+  never get one.
+- When the system outgrows an ADR, rewrite or delete it.
 
 The `sdd-make` skill builds this update step into its workflow.
