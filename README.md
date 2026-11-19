@@ -15,12 +15,15 @@ and grounds agent work.
 | `sdd-scan` | `/sdd-scan` | Read-only audit: scan the repo against `specs/` and report drift, ADR contradictions, and principle mismatches, ordered by criticality. Hands fixes off to `sdd-make`. |
 | `sdd-fix` | `/sdd-fix` | Debug: ground in `specs/` and git history, reproduce the bug, and prove its root cause with material evidence (artifacts kept outside the repo); no code changes without authorization. Hands the proven diagnosis to `sdd-plan`. |
 | `sdd-handout` | `/sdd-handout` | Hand work across a context boundary via `HANDOUT.md` (goal, key findings, next steps). If the file exists, resume the work it describes; if not, write one from the current session. |
+| `sdd-query` | `/sdd-query` | Read-only research: answer a question grounded in the code and `specs/` (git history and web sources as supporting evidence), optionally via subagents. Answers in chat with cited sources and keeps a report of sources and approach in a scratchpad outside the repo. |
 
 `sdd-init` → `sdd-plan` → `sdd-make` form the core workflow; `sdd-scan` is an
 out-of-band conformance check you run any time to catch drift, and `sdd-fix` is
 the diagnosis entry point for a bug — it proves a root cause, then feeds it into
 `sdd-plan`. `sdd-handout` cuts across all of them: run it when a session grows
 too long, then run it again in a fresh session to pick the work back up.
+`sdd-query` answers questions about the repo from its code and specs, and points
+you to `sdd-scan`, `sdd-fix`, or `sdd-plan` when the answer calls for action.
 
 This repo also dogfoods SDD: its own [`specs/`](specs/) directory (a content map
 plus ADRs) is the source of truth for how it is structured and built.
@@ -91,10 +94,12 @@ sdd-skills/
 │   │   └── SKILL.md
 │   ├── sdd-fix/
 │   │   └── SKILL.md
-│   └── sdd-handout/
-│       ├── SKILL.md
-│       └── assets/
-│           └── template.md   # canonical HANDOUT.md template
+│   ├── sdd-handout/
+│   │   ├── SKILL.md
+│   │   └── assets/
+│   │       └── template.md   # canonical HANDOUT.md template
+│   └── sdd-query/
+│       └── SKILL.md
 └── specs/                # this repo's own SDD artifacts
     ├── content-map.md    # navigable index of the repo
     └── adr/              # Architecture Decision Records

@@ -37,11 +37,14 @@ Each skill is a directory under `skills/` whose entry point is `SKILL.md`
 | `skills/sdd-scan/` | Audit the repo against `specs/`; report drift by criticality. |
 | `skills/sdd-fix/` | Debug: reproduce a bug and prove its root cause, then hand off to `sdd-plan`. |
 | `skills/sdd-handout/` | Carry work across sessions via a transient `HANDOUT.md`. |
+| `skills/sdd-query/` | Answer a question grounded in the code and `specs/`; read-only. |
 
 The skills form a workflow: `sdd-init` → `sdd-plan` → `sdd-make`, with
 `sdd-scan` as an out-of-band conformance check feeding fixes to `sdd-make`, and
 `sdd-fix` as the diagnosis entry point feeding `sdd-plan`. `sdd-handout` spans
-a session boundary in whichever phase the work is in.
+a session boundary in whichever phase the work is in. `sdd-query` is an
+out-of-band research entry point that can point to `sdd-scan`, `sdd-fix`, or
+`sdd-plan`.
 
 ## Build / install
 
