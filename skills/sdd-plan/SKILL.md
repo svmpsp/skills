@@ -1,6 +1,6 @@
 ---
 name: sdd-plan
-description: Spec-grounded feature planning skill for Spec-Driven Development (SDD). Plan a feature by grounding it in BOTH the repository's specs/ (content map + ADRs) and a structured interview with the user. Never plan on undocumented assumptions — surface each one, give context, and ask the user one question at a time; push back when an answer contradicts the existing specs. Use when the user runs /sdd-plan or asks to plan, scope, or design a feature before implementation in an SDD repo.
+description: Spec-grounded feature planning skill for Spec-Driven Development (SDD). Plan a feature by grounding it in BOTH the repository's specs/ (content map + ADRs) and a structured interview with the user. Never plan on undocumented assumptions — surface each one, give context, and ask the user one question at a time; push back when an answer contradicts the existing specs; get every LLM prompt approved, rendered with realistic example data. Use when the user runs /sdd-plan or asks to plan, scope, or design a feature before implementation in an SDD repo.
 ---
 
 # sdd-plan
@@ -91,7 +91,24 @@ should be deliberate, not accidental.
 - Push back the same way on answers that are internally inconsistent with
   earlier answers, or that would violate stated non-goals.
 
-### 5. Produce the grounded plan
+### 5. Get every prompt approved, rendered
+
+If the feature adds or changes text for an LLM to read — a system prompt, a
+prompt template, the messages of an LLM call, an agent or skill instruction
+file — draft it now and get it approved before it goes into the plan:
+
+- Show every message the model receives, in order, labelled by role, with
+  each placeholder filled by one realistic example value.
+- Render it exactly as the model will see it — JSON in its real formatting,
+  whitespace and escaping as sent, nothing tidied up for display.
+- Where they apply, include the call settings that shape the output: model,
+  temperature, max tokens, required output format or schema.
+- Ask the user to approve or edit it. Apply their edits verbatim — never
+  reword them — re-render, and repeat until they approve.
+
+The plan carries each approved prompt verbatim; `sdd-make` writes it as-is.
+
+### 6. Produce the grounded plan
 
 Once the assumptions are resolved, write the plan. It should include:
 
@@ -107,6 +124,7 @@ Once the assumptions are resolved, write the plan. It should include:
   not in ADRs.
   Plan a `content-map.md` edit only if the feature adds or removes a component
   or changes a component's goal — never to record its internals.
+- **Prompts** — each approved prompt, verbatim, and where it goes in the code.
 - **Steps** — an ordered, concrete plan a coder (or `sdd-make`) can execute.
 - **Open questions / assumed defaults** — anything still unresolved, stated
   plainly rather than buried.
@@ -128,4 +146,6 @@ plan off and let the user confirm it.
 - Push back on an answer that changes a design decision; make the change
   deliberate, and plan to rewrite or delete the ADR it outgrows. A new ADR is
   only ever proposed, never assumed.
+- No prompt goes into a plan unapproved — show it rendered with realistic
+  example data first.
 - Stay in planning — do not write or modify feature code in this skill.

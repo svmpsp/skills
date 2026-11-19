@@ -1,6 +1,6 @@
 ---
 name: sdd-make
-description: Spec-grounded coding skill for Spec-Driven Development (SDD). Before any planning or implementation, read the repository's specs/ directory (content map + ADRs) for orientation and rationale, treating the code as the source of truth; write DRY, KISS, self-documenting code with almost no comments; and once the task is done, keep specs/ in sync — rewriting or deleting ADRs the change outgrew, and proposing a new ADR only for a genuine design decision, with the user's confirmation. Use when the user runs /sdd-make or asks to implement, build, change, or fix code in a repo that uses an SDD specs/ directory.
+description: Spec-grounded coding skill for Spec-Driven Development (SDD). Before any planning or implementation, read the repository's specs/ directory (content map + ADRs) for orientation and rationale, treating the code as the source of truth; write DRY, KISS, self-documenting code with almost no comments; get every LLM prompt approved, rendered, before writing it; and once the task is done, keep specs/ in sync — rewriting or deleting ADRs the change outgrew, and proposing a new ADR only for a genuine design decision, with the user's confirmation. Use when the user runs /sdd-make or asks to implement, build, change, or fix code in a repo that uses an SDD specs/ directory.
 ---
 
 # sdd-make
@@ -133,6 +133,25 @@ Also:
   regenerate it the documented way; never revert it or wave it off as
   pre-existing.
 
+#### Prompts — get the rendered prompt approved before writing it
+
+Any text you write into the project for an LLM to read — a system prompt, a
+prompt template, the messages of an LLM call, an agent or skill instruction
+file — needs the user's approval before it goes into the code.
+
+1. If the plan carries an approved prompt, write it verbatim.
+2. Otherwise, or when implementation forces a change to an approved prompt,
+   show the user the rendered prompt first:
+   - every message the model receives, in order, labelled by role, with each
+     placeholder filled by one realistic example value;
+   - rendered exactly as the model will see it — JSON in its real formatting,
+     whitespace and escaping as sent, nothing tidied up for display;
+   - where they apply, the call settings that shape the output: model,
+     temperature, max tokens, required output format or schema.
+3. Ask the user to approve or edit it. Apply their edits verbatim — never
+   reword them — re-render, and repeat until they approve.
+4. Write nothing to the code until the prompt is approved.
+
 Note that DRY and KISS can pull in opposite directions — don't manufacture a
 shared abstraction just to remove a little duplication if it makes the code
 harder to follow. When they conflict, favor the simpler, clearer code.
@@ -188,6 +207,8 @@ left specs untouched, say so in a line.
   comments. Comments that justify a fix are a defect in the change, not a
   courtesy; if you catch yourself writing one, delete it and move the content to
   wherever it belongs.
+- Never write a prompt into the project before the user has approved it,
+  rendered exactly as the model will see it with realistic example data.
 - Never write a new ADR without the user's confirmation, never record a bug fix
   in one, and never pin a version in one.
 - ADRs stay in sync with the code: when a change outgrows one, rewrite or
