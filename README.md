@@ -30,9 +30,13 @@ you to `sdd-scan`, `sdd-fix`, or `sdd-plan` when the answer calls for action.
 | Agent | Invoked by | Purpose |
 |-------|------------|---------|
 | `sdd-qa-tester` | `sdd-make` (or by name) | Owns all test work for a change: first reviews it for testability and may send it back (`fix first` / `rework`), otherwise writes meaningful, non-naive tests derived from the acceptance criteria, in the repo's own conventions. Never changes feature code. |
+| `sdd-prompt-editor` | `sdd-plan`, `sdd-make` (or by name) | Writes and edits every prompt: plain instructions with only the context the model needs, a precise output format, and positive few-shot examples or step-by-step reasoning where the task calls for them. Returns the prompt plus a rendering for you to approve; never writes files. |
 
-`sdd-make` delegates all test work to `sdd-qa-tester` and stops if it is not
-installed — see [ADR-0009](specs/adr/0009-agents-ship-alongside-skills.md).
+`sdd-make` delegates all test work to `sdd-qa-tester`, and `sdd-plan`/`sdd-make`
+delegate all prompt writing to `sdd-prompt-editor`; each stops if its agent is
+not installed — see [ADR-0009](specs/adr/0009-agents-ship-alongside-skills.md)
+and [ADR-0008](specs/adr/0008-prompts-are-approved-rendered.md). You still
+approve every prompt before it is written.
 
 This repo also dogfoods SDD: its own [`specs/`](specs/) directory (a content map
 plus ADRs) is the source of truth for how it is structured and built.
@@ -114,7 +118,8 @@ sdd-skills/
 │   └── sdd-query/
 │       └── SKILL.md
 ├── agents/
-│   └── sdd-qa-tester.md    # test reviewer/writer; sdd-make delegates all test work here
+│   ├── sdd-prompt-editor.md  # writes every prompt; sdd-plan/sdd-make delegate here
+│   └── sdd-qa-tester.md      # test reviewer/writer; sdd-make delegates all test work here
 └── specs/                # this repo's own SDD artifacts
     ├── content-map.md    # navigable index of the repo
     └── adr/              # Architecture Decision Records

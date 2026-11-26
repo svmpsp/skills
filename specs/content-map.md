@@ -56,8 +56,10 @@ tools, and a body that is the agent's system prompt.
 | Agent | Purpose |
 |-------|---------|
 | `agents/sdd-qa-tester.md` | Own all test work for a change: review it for testability, then write meaningful, non-naive tests. |
+| `agents/sdd-prompt-editor.md` | Write and edit every prompt: plain instructions, only relevant context, positive few-shot examples. |
 
-`sdd-make` delegates all test work to `sdd-qa-tester`.
+`sdd-make` delegates all test work to `sdd-qa-tester`; `sdd-plan` and `sdd-make`
+delegate all prompt writing to `sdd-prompt-editor`.
 
 ## Build / install
 

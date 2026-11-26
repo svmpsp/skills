@@ -95,16 +95,24 @@ should be deliberate, not accidental.
 
 If the feature adds or changes text for an LLM to read — a system prompt, a
 prompt template, the messages of an LLM call, an agent or skill instruction
-file — draft it now and get it approved before it goes into the plan:
+file — delegate the writing to the `sdd-prompt-editor` agent; never write or
+edit a prompt yourself. If it is not available, stop and tell the user to
+install it.
 
-- Show every message the model receives, in order, labelled by role, with
-  each placeholder filled by one realistic example value.
-- Render it exactly as the model will see it — JSON in its real formatting,
-  whitespace and escaping as sent, nothing tidied up for display.
-- Where they apply, include the call settings that shape the output: model,
-  temperature, max tokens, required output format or schema.
-- Ask the user to approve or edit it. Apply their edits verbatim — never
-  reword them — re-render, and repeat until they approve.
+1. Brief it with what the prompt must achieve, the code that builds the call
+   (or the agent or skill it instructs), the interview answers that shape it,
+   and — for an edit — the current prompt.
+2. If it returns questions, put them to the user as part of the interview,
+   then delegate again.
+3. Show the user its rendering: every message the model receives, in order,
+   labelled by role, with each placeholder filled by one realistic example
+   value; exactly as the model will see it — JSON in its real formatting,
+   whitespace and escaping as sent; and, where they apply, the call settings
+   that shape the output: model, temperature, max tokens, required output
+   format or schema.
+4. Ask the user to approve or edit it. Apply edits given as exact text
+   verbatim — never reword them — and re-render; send feedback given in the
+   user's own words back to `sdd-prompt-editor`. Repeat until they approve.
 
 The plan carries each approved prompt verbatim; `sdd-make` writes it as-is.
 

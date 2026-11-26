@@ -149,16 +149,23 @@ file — needs the user's approval before it goes into the code.
 
 1. If the plan carries an approved prompt, write it verbatim.
 2. Otherwise, or when implementation forces a change to an approved prompt,
-   show the user the rendered prompt first:
+   delegate the writing to the `sdd-prompt-editor` agent — never write or edit
+   a prompt yourself. If it is not available, stop and tell the user to
+   install it. Brief it with what the prompt must achieve, the code that
+   builds the call (or the agent or skill it instructs), and — for an edit —
+   the current prompt. Put any questions it returns to the user, then
+   delegate again.
+3. Show the user its rendering:
    - every message the model receives, in order, labelled by role, with each
      placeholder filled by one realistic example value;
    - rendered exactly as the model will see it — JSON in its real formatting,
      whitespace and escaping as sent, nothing tidied up for display;
    - where they apply, the call settings that shape the output: model,
      temperature, max tokens, required output format or schema.
-3. Ask the user to approve or edit it. Apply their edits verbatim — never
-   reword them — re-render, and repeat until they approve.
-4. Write nothing to the code until the prompt is approved.
+4. Ask the user to approve or edit it. Apply edits given as exact text
+   verbatim — never reword them — and re-render; send feedback given in the
+   user's own words back to `sdd-prompt-editor`. Repeat until they approve.
+5. Write nothing to the code until the prompt is approved.
 
 Note that DRY and KISS can pull in opposite directions — don't manufacture a
 shared abstraction just to remove a little duplication if it makes the code
