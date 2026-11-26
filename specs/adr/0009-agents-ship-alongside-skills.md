@@ -48,6 +48,9 @@ writing tests itself.
 - An agent's description and body are prompts, approved rendered like any
   other ([ADR-0008](0008-prompts-are-approved-rendered.md)), which also
   records the second agent, `sdd-prompt-editor`.
+- Agents either own a kind of work (`sdd-qa-tester` writes tests,
+  `sdd-prompt-editor` writes prompts) or consult: `sdd-architect` only reviews
+  and proposes fixes, and the calling skill decides and edits.
 
 ## Alternatives considered
 
