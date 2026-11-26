@@ -135,6 +135,20 @@ Also:
   and show the user any finding that would change a recorded design decision
   and agree on it before changing the design. Name any finding you set aside,
   and why, in your report.
+- Whenever the change touches a user-facing surface — a GUI (screens,
+  components, styles, copy) or a CLI (commands, flags, arguments, help text,
+  output, prompts, error messages, exit codes) — have it reviewed by the
+  `sdd-ux-designer` agent before moving on to tests. If it is not available,
+  stop and tell the user to install it. Brief it with the task goal, who the
+  users are (if known), the changed files and their base ref, and how to run
+  the interface: for a GUI, the repo's documented command that starts the
+  local stack, the URL to open, and whether the local data is disposable; for
+  a CLI, the command that invokes it. Act on its report: on `blocked`, give it
+  what it says is missing, asking the user if you cannot, and delegate again.
+  Fix the findings you agree with, and show the user any finding that would
+  change a recorded design decision or an established UX pattern and agree on
+  it before changing it. Name any finding you set aside, and why, in your
+  report.
 - Delegate all test work to the `sdd-qa-tester` agent — never write or edit tests
   yourself. Brief it with the goal, the acceptance criteria (from the plan, or
   as you understood the task), the changed files and their base ref, and the

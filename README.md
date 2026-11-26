@@ -31,6 +31,7 @@ you to `sdd-scan`, `sdd-fix`, or `sdd-plan` when the answer calls for action.
 |-------|------------|---------|
 | `sdd-qa-tester` | `sdd-make` (or by name) | Owns all test work for a change: first reviews it for testability and may send it back (`fix first` / `rework`), otherwise writes meaningful, non-naive tests derived from the acceptance criteria, in the repo's own conventions. Never changes feature code. |
 | `sdd-prompt-editor` | `sdd-plan`, `sdd-make` (or by name) | Writes and edits every prompt: plain instructions with only the context the model needs, a precise output format, and positive few-shot examples or step-by-step reasoning where the task calls for them. Returns the prompt plus a rendering for you to approve; never writes files. |
+| `sdd-ux-designer` | `sdd-make` (or by name) | Consultant reviewer for user-facing changes: checks GUIs in the running local app (via a browser) and CLIs (help, errors, exit codes, output) for usability, consistency with the project's established patterns, and accessibility — Nielsen's heuristics, WCAG 2.2 AA, clig.dev. Reports findings by user impact with concrete fixes. Never edits the project's files. |
 | `sdd-architect` | `sdd-make`, `sdd-fix` (or by name) | Consultant reviewer: flags unnecessary abstractions, tangled responsibilities, duplicated logic, unclear names, undocumented regexes, and lint/type-check suppressions. Traces every execution path before proposing a fix, and reports findings with concrete fixes. Never edits code. |
 
 `sdd-make` delegates all test work to `sdd-qa-tester`, and `sdd-plan`/`sdd-make`
@@ -39,7 +40,8 @@ not installed — see [ADR-0009](specs/adr/0009-agents-ship-alongside-skills.md)
 and [ADR-0008](specs/adr/0008-prompts-are-approved-rendered.md). You still
 approve every prompt before it is written. `sdd-make` consults `sdd-architect`
 when an implementation feels overcomplicated, and `sdd-fix` when a bug may be
-rooted in the code's structure.
+rooted in the code's structure. `sdd-make` also has `sdd-ux-designer` review
+every change that touches a GUI or a CLI.
 
 This repo also dogfoods SDD: its own [`specs/`](specs/) directory (a content map
 plus ADRs) is the source of truth for how it is structured and built.
@@ -123,7 +125,8 @@ sdd-skills/
 ├── agents/
 │   ├── sdd-architect.md      # design reviewer; sdd-make/sdd-fix consult it
 │   ├── sdd-prompt-editor.md  # writes every prompt; sdd-plan/sdd-make delegate here
-│   └── sdd-qa-tester.md      # test reviewer/writer; sdd-make delegates all test work here
+│   ├── sdd-qa-tester.md      # test reviewer/writer; sdd-make delegates all test work here
+│   └── sdd-ux-designer.md    # GUI/CLI usability reviewer; sdd-make consults it
 └── specs/                # this repo's own SDD artifacts
     ├── content-map.md    # navigable index of the repo
     └── adr/              # Architecture Decision Records
@@ -136,4 +139,5 @@ subdirectories (`assets/`, `references/`, `scripts/`) — see
 [ADR-0005](specs/adr/0005-skill-support-files-layout.md).
 
 Each agent is a single Markdown file with YAML frontmatter (`name`,
-`description`, `tools`, `model`); its body is the agent's system prompt.
+`description`, `tools` or `disallowedTools`, `model`); its body is the agent's
+system prompt.

@@ -49,8 +49,11 @@ writing tests itself.
   other ([ADR-0008](0008-prompts-are-approved-rendered.md)), which also
   records the second agent, `sdd-prompt-editor`.
 - Agents either own a kind of work (`sdd-qa-tester` writes tests,
-  `sdd-prompt-editor` writes prompts) or consult: `sdd-architect` only reviews
-  and proposes fixes, and the calling skill decides and edits.
+  `sdd-prompt-editor` writes prompts) or consult: `sdd-architect` (design) and
+  `sdd-ux-designer` (usability of GUIs and CLIs) only review and propose
+  fixes, and the calling skill decides and edits.
+- A consultant that needs session tools whose names vary, such as browser MCP
+  tools, omits `tools` and blocks file edits with `disallowedTools` instead.
 
 ## Alternatives considered
 

@@ -59,11 +59,12 @@ tools, and a body that is the agent's system prompt.
 | `agents/sdd-qa-tester.md` | Own all test work for a change: review it for testability, then write meaningful, non-naive tests. |
 | `agents/sdd-prompt-editor.md` | Write and edit every prompt: plain instructions, only relevant context, positive few-shot examples. |
 | `agents/sdd-architect.md` | Review code for design and readability and propose fixes; a consultant that never edits. |
+| `agents/sdd-ux-designer.md` | Review user-facing changes (GUI in the running app, CLI) for usability, consistency, and accessibility; a consultant that never edits. |
 
 `sdd-make` delegates all test work to `sdd-qa-tester`; `sdd-plan` and `sdd-make`
 delegate all prompt writing to `sdd-prompt-editor`; `sdd-make` and `sdd-fix`
 consult `sdd-architect` when code feels overcomplicated or a bug may be
-structural.
+structural; `sdd-make` consults `sdd-ux-designer` on every GUI or CLI change.
 
 ## Build / install
 
