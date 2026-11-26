@@ -1,6 +1,6 @@
 # sdd-skills
 
-A set of Claude Code skills for **Spec-Driven Development (SDD)** — a workflow
+A set of Claude Code skills and agents for **Spec-Driven Development (SDD)** — a workflow
 where a repository's `specs/` directory (a content map plus Architecture
 Decision Records) is treated as a first-class, maintained artifact that guides
 and grounds agent work.
@@ -25,34 +25,46 @@ too long, then run it again in a fresh session to pick the work back up.
 `sdd-query` answers questions about the repo from its code and specs, and points
 you to `sdd-scan`, `sdd-fix`, or `sdd-plan` when the answer calls for action.
 
+## Agents
+
+| Agent | Invoked by | Purpose |
+|-------|------------|---------|
+| `sdd-qa-tester` | `sdd-make` (or by name) | Owns all test work for a change: first reviews it for testability and may send it back (`fix first` / `rework`), otherwise writes meaningful, non-naive tests derived from the acceptance criteria, in the repo's own conventions. Never changes feature code. |
+
+`sdd-make` delegates all test work to `sdd-qa-tester` and stops if it is not
+installed — see [ADR-0009](specs/adr/0009-agents-ship-alongside-skills.md).
+
 This repo also dogfoods SDD: its own [`specs/`](specs/) directory (a content map
 plus ADRs) is the source of truth for how it is structured and built.
 
 ## Installation
 
-Skills are plain folders under `skills/`. They install into your Claude Code
-skills directory (`~/.claude/skills/`).
+Skills are plain folders under `skills/`; agents are single files under
+`agents/`. They install into your Claude Code skills and agents directories
+(`~/.claude/skills/` and `~/.claude/agents/`).
 
 ```bash
 git clone <this-repo-url> sdd-skills
 cd sdd-skills
 
-# Install all skills
+# Install all skills and agents
 make install
 ```
 
-`make install` copies every skill into `~/.claude/skills/`. Override the
-destination with `SKILLS_DIR`:
+`make install` copies every skill into `~/.claude/skills/` and every agent into
+`~/.claude/agents/`. Override the destinations with `SKILLS_DIR` and
+`AGENTS_DIR`:
 
 ```bash
-make install SKILLS_DIR=/custom/path/skills
+make install SKILLS_DIR=/custom/path/skills AGENTS_DIR=/custom/path/agents
 ```
 
-You can also copy folders by hand instead of using `make`:
+You can also copy them by hand instead of using `make`:
 
 ```bash
-# Install all skills
+# Install all skills and agents
 cp -r skills/* ~/.claude/skills/
+cp agents/*.md ~/.claude/agents/
 
 # ...or install a single skill
 cp -r skills/sdd-init ~/.claude/skills/
@@ -62,13 +74,14 @@ To pick up new versions later, re-run `make install` after `git pull`. The
 Makefile also provides:
 
 ```bash
-make uninstall    # remove the installed skills from SKILLS_DIR
-make list         # list the skills in this repo
+make uninstall    # remove the installed skills and agents (other agents are left alone)
+make list         # list the skills and agents in this repo
 ```
 
 ### Verify
 
-In a Claude Code session, the skill becomes available as a slash command:
+Start a new Claude Code session (agents are loaded at session start). Skills
+are available as slash commands, and `sdd-qa-tester` appears in `/agents`:
 
 ```
 /sdd-init
@@ -100,6 +113,8 @@ sdd-skills/
 │   │       └── template.md   # canonical HANDOUT.md template
 │   └── sdd-query/
 │       └── SKILL.md
+├── agents/
+│   └── sdd-qa-tester.md    # test reviewer/writer; sdd-make delegates all test work here
 └── specs/                # this repo's own SDD artifacts
     ├── content-map.md    # navigable index of the repo
     └── adr/              # Architecture Decision Records
@@ -110,3 +125,6 @@ Each skill is a directory containing a `SKILL.md` with YAML frontmatter
 skill is invoked. A skill may also bundle static support files in standard
 subdirectories (`assets/`, `references/`, `scripts/`) — see
 [ADR-0005](specs/adr/0005-skill-support-files-layout.md).
+
+Each agent is a single Markdown file with YAML frontmatter (`name`,
+`description`, `tools`, `model`); its body is the agent's system prompt.

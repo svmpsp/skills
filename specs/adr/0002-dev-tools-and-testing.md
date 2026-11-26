@@ -7,9 +7,9 @@
 ## Context
 
 This repository contains no application source code. Its deliverables are
-Claude Code skills authored as Markdown instruction files (`SKILL.md`) with
-YAML frontmatter, distributed by copying directories into a user's
-`~/.claude/skills/` directory. There is no programming language runtime,
+Claude Code skills and agents authored as Markdown instruction files with YAML
+frontmatter, distributed by copying them into a user's `~/.claude/skills/` and
+`~/.claude/agents/` directories. There is no programming language runtime,
 package manager, compiler, linter, or test framework in the repo today — the
 only tooling is GNU Make (`Makefile`) plus standard POSIX shell utilities
 (`cp`, `mkdir`, `rm`, `ln`, `ls`).
@@ -19,15 +19,19 @@ only tooling is GNU Make (`Makefile`) plus standard POSIX shell utilities
 We will keep the toolchain minimal and dependency-free:
 
 - **Authoring format:** each skill is `skills/<name>/SKILL.md` with YAML
-  frontmatter (`name`, `description`) followed by Markdown instructions.
-- **Build/install tooling:** GNU Make drives install/uninstall/list against a
-  `SKILLS_DIR` variable (default `$(HOME)/.claude/skills`) — see `Makefile`.
+  frontmatter (`name`, `description`) followed by Markdown instructions. Each
+  agent is `agents/<name>.md` with YAML frontmatter (`name`, `description`,
+  `tools`, `model`) followed by its system prompt.
+- **Build/install tooling:** GNU Make drives install/uninstall/list against
+  `SKILLS_DIR` and `AGENTS_DIR` variables (defaults `$(HOME)/.claude/skills`
+  and `$(HOME)/.claude/agents`) — see `Makefile`.
 - **No language runtime or package manager** is introduced; there are no
   third-party dependencies to manage.
-- **Testing is manual and behavioral:** install the skills (`make install`)
-  and exercise each slash command (`/sdd-init`, `/sdd-plan`, `/sdd-make`) in a
-  Claude Code session, verifying the documented "done" state. Frontmatter and
-  Markdown are checked by review.
+- **Testing is manual and behavioral:** install (`make install`) and exercise
+  each slash command (`/sdd-init`, `/sdd-plan`, `/sdd-make`) in a new Claude
+  Code session, verifying the documented "done" state; agents are exercised
+  through the skills that delegate to them (`sdd-qa-tester` via `/sdd-make`).
+  Frontmatter and Markdown are checked by review.
 
 ## Consequences
 

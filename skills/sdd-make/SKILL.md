@@ -126,12 +126,20 @@ Also:
 - Match the surrounding code's style, naming, and idioms.
 - Handle errors and edge cases deliberately, not as an afterthought.
 - Keep changes focused on the task; don't bundle unrelated refactors.
-- Follow the repo's testing approach (the tooling ADR points to it): add or
-  update tests in the existing conventions, then verify every touched
-  component with the same commands CI runs — not a bare test run. If a build
-  step rewrites a generated file such as a lockfile, keep the change and
-  regenerate it the documented way; never revert it or wave it off as
-  pre-existing.
+- Delegate all test work to the `sdd-qa-tester` agent — never write or edit tests
+  yourself. Brief it with the goal, the acceptance criteria (from the plan, or
+  as you understood the task), the changed files and their base ref, and the
+  repo's test command (the tooling ADR points to it). If it is not available,
+  stop and tell the user to install it. Act on its verdict:
+  - `fix first` — fix the problems it names, then delegate again.
+  - `rework` — show the user its findings and agree on the restructuring before
+    changing the design, then delegate again.
+  - `tested` — if a test fails because the feature is wrong, fix the code —
+    never the test — and re-run.
+- Verify every touched component with the same commands CI runs — not a bare
+  test run. If a build step rewrites a generated file such as a lockfile, keep
+  the change and regenerate it the documented way; never revert it or wave it
+  off as pre-existing.
 
 #### Prompts — get the rendered prompt approved before writing it
 
