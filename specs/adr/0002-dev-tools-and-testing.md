@@ -21,7 +21,7 @@ We will keep the toolchain minimal and dependency-free:
 - **Authoring format:** each skill is `skills/<name>/SKILL.md` with YAML
   frontmatter (`name`, `description`) followed by Markdown instructions. Each
   agent is `agents/<name>.md` with YAML frontmatter (`name`, `description`,
-  `tools`, `model`) followed by its system prompt.
+  `tools` or `disallowedTools`, `model`) followed by its system prompt.
 - **Build/install tooling:** GNU Make drives install/uninstall/list against
   `SKILLS_DIR` and `AGENTS_DIR` variables (defaults `$(HOME)/.claude/skills`
   and `$(HOME)/.claude/agents`) — see `Makefile`.
