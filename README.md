@@ -13,14 +13,14 @@ and grounds agent work.
 | `sdd-plan` | `/sdd-plan` | Plan a feature grounded in both `specs/` and a structured user interview (one question at a time); no undocumented assumptions, push back when answers contradict the specs; and get every LLM prompt approved, rendered with realistic example data. |
 | `sdd-make` | `/sdd-make` | Spec-grounded coding: read `specs/` before planning, write self-documenting DRY + KISS code as the source of truth, and keep `specs/` in sync once the task is done — rewriting or deleting outgrown ADRs, and adding one only with your confirmation. Never writes an LLM prompt before you approve it rendered. |
 | `sdd-scan` | `/sdd-scan` | Read-only audit: scan the repo against `specs/` and report drift, ADR contradictions, and principle mismatches, ordered by criticality. Hands fixes off to `sdd-make`. |
-| `sdd-fix` | `/sdd-fix` | Debug: ground in `specs/` and git history, reproduce the bug, and prove its root cause with material evidence (artifacts kept outside the repo); no code changes without authorization. Hands the proven diagnosis to `sdd-plan`. |
+| `sdd-fix` | `/sdd-fix` | Debug: ground in `specs/` and git history, reproduce the bug, and prove its root cause with material evidence (artifacts kept outside the repo); no code changes without authorization. Hands the proven diagnosis to `sdd-plan`, or straight to `sdd-make` when the fix is small. |
 | `sdd-handout` | `/sdd-handout` | Hand work across a context boundary via `HANDOUT.md` (goal, key findings, next steps). If the file exists, resume the work it describes; if not, write one from the current session. |
 | `sdd-query` | `/sdd-query` | Read-only research: answer a question grounded in the code and `specs/` (git history and web sources as supporting evidence), optionally via subagents. Answers in chat with cited sources and keeps a report of sources and approach in a scratchpad outside the repo. |
 
 `sdd-init` → `sdd-plan` → `sdd-make` form the core workflow; `sdd-scan` is an
 out-of-band conformance check you run any time to catch drift, and `sdd-fix` is
 the diagnosis entry point for a bug — it proves a root cause, then feeds it into
-`sdd-plan`. `sdd-handout` cuts across all of them: run it when a session grows
+`sdd-plan` (or `sdd-make` for a small fix). `sdd-handout` cuts across all of them: run it when a session grows
 too long, then run it again in a fresh session to pick the work back up.
 `sdd-query` answers questions about the repo from its code and specs, and points
 you to `sdd-scan`, `sdd-fix`, or `sdd-plan` when the answer calls for action.
@@ -31,12 +31,15 @@ you to `sdd-scan`, `sdd-fix`, or `sdd-plan` when the answer calls for action.
 |-------|------------|---------|
 | `sdd-qa-tester` | `sdd-make` (or by name) | Owns all test work for a change: first reviews it for testability and may send it back (`fix first` / `rework`), otherwise writes meaningful, non-naive tests derived from the acceptance criteria, in the repo's own conventions. Never changes feature code. |
 | `sdd-prompt-editor` | `sdd-plan`, `sdd-make` (or by name) | Writes and edits every prompt: plain instructions with only the context the model needs, a precise output format, and positive few-shot examples or step-by-step reasoning where the task calls for them. Returns the prompt plus a rendering for you to approve; never writes files. |
+| `sdd-architect` | `sdd-make`, `sdd-fix` (or by name) | Consultant reviewer: flags unnecessary abstractions, tangled responsibilities, duplicated logic, unclear names, undocumented regexes, and lint/type-check suppressions. Traces every execution path before proposing a fix, and reports findings with concrete fixes. Never edits code. |
 
 `sdd-make` delegates all test work to `sdd-qa-tester`, and `sdd-plan`/`sdd-make`
 delegate all prompt writing to `sdd-prompt-editor`; each stops if its agent is
 not installed — see [ADR-0009](specs/adr/0009-agents-ship-alongside-skills.md)
 and [ADR-0008](specs/adr/0008-prompts-are-approved-rendered.md). You still
-approve every prompt before it is written.
+approve every prompt before it is written. `sdd-make` consults `sdd-architect`
+when an implementation feels overcomplicated, and `sdd-fix` when a bug may be
+rooted in the code's structure.
 
 This repo also dogfoods SDD: its own [`specs/`](specs/) directory (a content map
 plus ADRs) is the source of truth for how it is structured and built.
@@ -118,6 +121,7 @@ sdd-skills/
 │   └── sdd-query/
 │       └── SKILL.md
 ├── agents/
+│   ├── sdd-architect.md      # design reviewer; sdd-make/sdd-fix consult it
 │   ├── sdd-prompt-editor.md  # writes every prompt; sdd-plan/sdd-make delegate here
 │   └── sdd-qa-tester.md      # test reviewer/writer; sdd-make delegates all test work here
 └── specs/                # this repo's own SDD artifacts

@@ -1,6 +1,6 @@
 ---
 name: sdd-fix
-description: Spec-grounded debugging skill for Spec-Driven Development (SDD). Diagnose a bug by grounding yourself in the repository's specs/ (content map + ADRs) and its git history, then reproduce the problem and pin down its root cause with material evidence (a reproduction script, failing output) — never guessing, never testing an assumption you have not run. Make no code changes and commit nothing without explicit authorization; keep every artifact in a scratchpad outside the repo. Once the root cause is proven, explain it to the user in plain terms and propose handing off to sdd-plan to design a mitigation. Use when the user runs /sdd-fix or asks to debug, diagnose, reproduce, or find the root cause of a bug in an SDD repo.
+description: Spec-grounded debugging skill for Spec-Driven Development (SDD). Diagnose a bug by grounding yourself in the repository's specs/ (content map + ADRs) and its git history, then reproduce the problem and pin down its root cause with material evidence (a reproduction script, failing output) — never guessing, never testing an assumption you have not run. Make no code changes and commit nothing without explicit authorization; keep every artifact in a scratchpad outside the repo. Once the root cause is proven, explain it to the user in plain terms, judge whether the fix is small, and propose a hand-off — straight to sdd-make when the fix is small and fully settled by the diagnosis, otherwise to sdd-plan to design a mitigation — starting it only when the user agrees. Use when the user runs /sdd-fix or asks to debug, diagnose, reproduce, or find the root cause of a bug in an SDD repo.
 ---
 
 # sdd-fix
@@ -9,8 +9,9 @@ The debugging skill of the SDD workflow. Its job is **diagnosis, not repair**:
 given a problem the user describes, it grounds itself in the repository's
 `specs/` (the content map and ADRs created by `sdd-init`) and its **git
 history**, then produces a **reproducible example** and pins down the **root
-cause with material evidence**. It ends by handing off to `sdd-plan` to design
-the fix — it does not write the fix itself.
+cause with material evidence**. It ends by proposing a hand-off — straight to
+`sdd-make` when the fix is small and fully settled by the diagnosis, otherwise
+to `sdd-plan` to design it — and never writes the fix itself.
 
 Two rules define this skill:
 
@@ -110,6 +111,17 @@ Work from the reproduction to the underlying cause. Do not stop at the symptom.
    that still holds, or a flaw in the design itself. Only the second could ever
    warrant an ADR change — a bug fix on its own never does. If you find an ADR
    that is simply stale, mention it for later sync.
+5. When the bug may be hidden by or rooted in the code's structure — tangled
+   responsibilities, duplicated logic that drifted apart, an abstraction that
+   obscures the data flow — consult the `sdd-architect` agent on the code
+   around the bug. If it is not available, stop and tell the user to install
+   it. Brief it with the problem, the reproduction and its captured output,
+   the files around the bug and the commits that touched them, and your
+   current hypotheses. Each finding it flags as a possible cause is a
+   hypothesis: test it like any other (item 2) before it goes in the
+   diagnosis. Record the structural causes your evidence confirms as the root
+   cause or as contributing factors. Its proposed fixes are input for
+   `sdd-plan`; you still change no code.
 
 Every step here is backed by something you ran. Material evidence — a failing
 reproduction, captured output, a probe result — is the standard; reasoning
@@ -156,10 +168,35 @@ simple terms** — what is actually going wrong and why the reproduction fails, 
 a sentence or two a non-expert can follow, without the diagnostic jargon. The
 full evidence lives in the report; this is the human-readable takeaway.
 
-Then **propose** — do not silently start — handing the proven diagnosis to
-`sdd-plan` to design a mitigation/fix, grounded in the same specs and a user
-interview. Ask the user whether to proceed; only invoke `sdd-plan` once they
-agree.
+Then judge the size of the fix. It is **small** only when all of these hold:
+
+- it is confined to the code at the root cause;
+- it follows from the diagnosis, with no design choice left open;
+- it changes no recorded design decision (ADR) and adds no component;
+- it involves no LLM prompt.
+
+If any of these is in doubt, the fix is not small.
+
+**Propose** — do not silently start — one hand-off, and say in one line why
+you judged the fix small or not:
+
+- **Small:** hand off to `sdd-make` directly. The diagnosis report is its
+  brief, and the reproduction is its acceptance criterion — the fix is done
+  when the reproduction passes.
+- **Not small:** hand off to `sdd-plan` to design a mitigation/fix, grounded
+  in the same specs and a user interview.
+
+For example:
+
+> Proposed next step: `sdd-make` — the date parser drops the last day of the
+> month at `src/dates.py:88`; the correct bound is clear from the diagnosis
+> and no design decision is touched.
+
+> Proposed next step: `sdd-plan` — the cache can be invalidated either on
+> write or by TTL, and ADR-0006 commits to neither; that choice needs design.
+
+The user decides. Ask whether to proceed with the proposed skill — or the
+other one, if they prefer — and invoke it only once they agree.
 
 Do not implement, edit, or commit a fix in this skill — not even an "obvious
 one-liner" — without explicit user authorization to leave the diagnosis phase.
@@ -172,7 +209,9 @@ one-liner" — without explicit user authorization to leave the diagnosis phase.
 - Never advance a cause you have not tested — material evidence over reasoning,
   every time. A reproduction is required before a root-cause claim.
 - Never edit repo files or commit without explicit authorization. This skill
-  diagnoses; `sdd-plan` designs the fix and `sdd-make` implements it.
+  diagnoses and proposes the hand-off; `sdd-plan` designs the fix and
+  `sdd-make` implements it, or `sdd-make` takes a small fix straight from the
+  diagnosis — always with the user's agreement.
 - Every artifact (repro scripts, logs, probes) lives in a scratchpad **outside
   the repo** — leave the working tree untouched.
 - Ground the diagnosis in git history: cite the commits that inform it.

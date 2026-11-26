@@ -126,6 +126,15 @@ Also:
 - Match the surrounding code's style, naming, and idioms.
 - Handle errors and edge cases deliberately, not as an afterthought.
 - Keep changes focused on the task; don't bundle unrelated refactors.
+- Whenever you feel you are overcomplicating the implementation — layers,
+  options, or indirection piling up, or code you would struggle to explain in
+  a sentence — have it checked by the `sdd-architect` agent before moving on
+  to tests. If it is not available, stop and tell the user to install it.
+  Brief it with the task goal, the changed files and their base ref, and what
+  feels overcomplicated. Act on its report: fix the findings you agree with,
+  and show the user any finding that would change a recorded design decision
+  and agree on it before changing the design. Name any finding you set aside,
+  and why, in your report.
 - Delegate all test work to the `sdd-qa-tester` agent — never write or edit tests
   yourself. Brief it with the goal, the acceptance criteria (from the plan, or
   as you understood the task), the changed files and their base ref, and the

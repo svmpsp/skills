@@ -37,13 +37,14 @@ Each skill is a directory under `skills/` whose entry point is `SKILL.md`
 | `skills/sdd-plan/` | Plan a feature, grounded in `specs/` and a user interview. |
 | `skills/sdd-make/` | Spec-grounded coding: read specs, honor them, update them. |
 | `skills/sdd-scan/` | Audit the repo against `specs/`; report drift by criticality. |
-| `skills/sdd-fix/` | Debug: reproduce a bug and prove its root cause, then hand off to `sdd-plan`. |
+| `skills/sdd-fix/` | Debug: reproduce a bug and prove its root cause, then hand off to `sdd-plan` (or straight to `sdd-make` for a small fix). |
 | `skills/sdd-handout/` | Carry work across sessions via a transient `HANDOUT.md`. |
 | `skills/sdd-query/` | Answer a question grounded in the code and `specs/`; read-only. |
 
 The skills form a workflow: `sdd-init` → `sdd-plan` → `sdd-make`, with
 `sdd-scan` as an out-of-band conformance check feeding fixes to `sdd-make`, and
-`sdd-fix` as the diagnosis entry point feeding `sdd-plan`. `sdd-handout` spans
+`sdd-fix` as the diagnosis entry point feeding `sdd-plan` (or `sdd-make` for a
+small fix). `sdd-handout` spans
 a session boundary in whichever phase the work is in. `sdd-query` is an
 out-of-band research entry point that can point to `sdd-scan`, `sdd-fix`, or
 `sdd-plan`.
@@ -57,9 +58,12 @@ tools, and a body that is the agent's system prompt.
 |-------|---------|
 | `agents/sdd-qa-tester.md` | Own all test work for a change: review it for testability, then write meaningful, non-naive tests. |
 | `agents/sdd-prompt-editor.md` | Write and edit every prompt: plain instructions, only relevant context, positive few-shot examples. |
+| `agents/sdd-architect.md` | Review code for design and readability and propose fixes; a consultant that never edits. |
 
 `sdd-make` delegates all test work to `sdd-qa-tester`; `sdd-plan` and `sdd-make`
-delegate all prompt writing to `sdd-prompt-editor`.
+delegate all prompt writing to `sdd-prompt-editor`; `sdd-make` and `sdd-fix`
+consult `sdd-architect` when code feels overcomplicated or a bug may be
+structural.
 
 ## Build / install
 
