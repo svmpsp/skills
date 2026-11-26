@@ -8,19 +8,21 @@
 ## What this project is
 
 `sdd-skills` is a collection of [Claude Code](https://docs.claude.com/en/docs/claude-code)
-skills implementing a **Spec-Driven Development (SDD)** workflow. In SDD a
-repository's `specs/` directory (a content map plus Architecture Decision
+skills and agents implementing a **Spec-Driven Development (SDD)** workflow. In
+SDD a repository's `specs/` directory (a content map plus Architecture Decision
 Records) is a first-class, maintained artifact that grounds and guides agent
 work. Each skill is a directory installed into a user's Claude Code skills
-directory.
+directory; each agent is a file installed into their agents directory
+([ADR-0009](adr/0009-agents-ship-alongside-skills.md)).
 
 ## Top-level layout
 
 | Path | Purpose |
 |------|---------|
-| `README.md` | User-facing overview: the skills, installation, and layout. |
-| `Makefile` | Install/uninstall/list skills into a Claude Code skills directory. |
+| `README.md` | User-facing overview: the skills and agents, installation, and layout. |
+| `Makefile` | Install/uninstall/list skills and agents into the Claude Code directories. |
 | `skills/` | The skills; one directory per skill (see below). |
+| `agents/` | The agents; one file per agent (see below). |
 | `specs/` | SDD artifacts for *this* repo (content map + ADRs). |
 | `.gitignore` | Ignores `HANDOUT.md`, the transient session hand-off. |
 
@@ -46,13 +48,24 @@ a session boundary in whichever phase the work is in. `sdd-query` is an
 out-of-band research entry point that can point to `sdd-scan`, `sdd-fix`, or
 `sdd-plan`.
 
+## Components — the agents
+
+Each agent is a single file `agents/<name>.md`: frontmatter for routing and
+tools, and a body that is the agent's system prompt.
+
+| Agent | Purpose |
+|-------|---------|
+| `agents/sdd-qa-tester.md` | Own all test work for a change: review it for testability, then write meaningful, non-naive tests. |
+
+`sdd-make` delegates all test work to `sdd-qa-tester`.
+
 ## Build / install
 
 ```bash
-make install                      # copy skills/* into ~/.claude/skills/
-make install SKILLS_DIR=/path     # install to a custom directory
-make uninstall                    # remove installed skills
-make list                         # list skills in this repo
+make install                      # copy skills/* into ~/.claude/skills/ and agents/*.md into ~/.claude/agents/
+make install SKILLS_DIR=/path AGENTS_DIR=/path   # install to custom directories
+make uninstall                    # remove installed skills and agents
+make list                         # list skills and agents in this repo
 ```
 
 ## Tests
@@ -62,8 +75,9 @@ No automated suite; validation is manual — see
 
 ## Configuration & environment
 
-The only input is the `SKILLS_DIR` make variable (default
-`$(HOME)/.claude/skills`). No environment files, secrets, or services.
+The only inputs are the `SKILLS_DIR` and `AGENTS_DIR` make variables (defaults
+`$(HOME)/.claude/skills` and `$(HOME)/.claude/agents`). No environment files,
+secrets, or services.
 
 ## Deeper docs
 

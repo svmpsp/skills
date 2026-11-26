@@ -51,3 +51,4 @@ An ADR is **not**:
 | [0006](0006-handout-is-a-transient-session-bridge.md) | HANDOUT.md is a transient, gitignored session bridge at the repo root | Accepted |
 | [0007](0007-content-map-is-a-component-index.md) | The content map is a component-level index | Accepted |
 | [0008](0008-prompts-are-approved-rendered.md) | Prompts are approved rendered before they are written | Accepted |
+| [0009](0009-agents-ship-alongside-skills.md) | Agents ship alongside skills; sdd-make delegates all test work to sdd-qa-tester | Accepted |
