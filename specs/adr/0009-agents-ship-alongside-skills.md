@@ -23,7 +23,7 @@ report.
 We will ship agents alongside skills, as single files `agents/<name>.md`,
 installed by `make install` into `AGENTS_DIR` (default `$(HOME)/.claude/agents`).
 
-The first agent, `sdd-qa-tester`, owns **all** test work. `sdd-make` never writes or
+`sdd-qa-tester` owns **all** test work. `sdd-make` never writes or
 edits tests; it briefs `sdd-qa-tester` with the goal, acceptance criteria, changed
 files and base ref, and test command, and acts on its verdict:
 
@@ -46,7 +46,8 @@ writing tests itself.
 - Agents are single files, so they cannot bundle support files the way skills
   do ([ADR-0005](0005-skill-support-files-layout.md)).
 - An agent's description and body are prompts, approved rendered like any
-  other ([ADR-0008](0008-prompts-are-approved-rendered.md)).
+  other ([ADR-0008](0008-prompts-are-approved-rendered.md)), which also
+  records the second agent, `sdd-prompt-editor`.
 
 ## Alternatives considered
 
