@@ -120,21 +120,15 @@ from `mktemp -d` if there is no scratchpad. Never write it in the working tree.
 
 ## 4. Pick the project board
 
-Every issue goes on a GitHub Projects board. Ask only when you cannot tell
-which board to use:
+Every issue goes on a GitHub Projects board. List the boards with
+`gh project list --owner <owner>`, then:
 
-1. **The user named a board:** find it in `gh project list --owner <owner>`. If
-   no board has that title, ask whether to create it or whether they meant one
-   of the existing boards. Create it only when they confirm:
+1. **The user named a board:** use it. If no board has that title, create it:
    `gh project create --owner <owner> --title "<name>"`.
-2. **The user named none:** list the boards linked to the repo:
-   ```
-   gh api graphql -f query='query($o:String!,$r:String!){repository(owner:$o,name:$r){projectsV2(first:20){nodes{number title}}}}' -f o=<owner> -f r=<repo-name>
-   ```
-   If exactly one board is linked, use it without asking. Otherwise show
-   `gh project list --owner <owner>` and ask which board to use. If they give a
-   new name, create it as above.
-3. Link the board to the repo:
+2. **A board has the repo's name** (`<repo-name>`): use it.
+3. **Otherwise:** show the boards and ask which one to use, or what to name a
+   new one. Create a new one as above.
+4. Link the board to the repo:
    `gh project link <number> --owner <owner> --repo <owner/repo>`. A board that
    is already linked counts as success.
 
