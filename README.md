@@ -16,6 +16,8 @@ and grounds agent work.
 | `sdd-fix` | `/sdd-fix` | Debug: ground in `specs/` and git history, reproduce the bug, and prove its root cause with material evidence (artifacts kept outside the repo); no code changes without authorization. Hands the proven diagnosis to `sdd-plan`, or straight to `sdd-make` when the fix is small. |
 | `sdd-handout` | `/sdd-handout` | Hand work across a context boundary via `HANDOUT.md` (goal, key findings, next steps). If the file exists, resume the work it describes; if not, write one from the current session. |
 | `sdd-query` | `/sdd-query` | Read-only research: answer a question grounded in the code and `specs/` (git history and web sources as supporting evidence), optionally via subagents. Answers in chat with cited sources and keeps a report of sources and approach in a scratchpad outside the repo. |
+| `new-issue` | `/new-issue` | Record work the session has already settled as self-contained GitHub issues — one per item of work, or an epic with sub-issues — so it can be shipped later, in any order, from a fresh session. Fills a bundled template (goal, context, scope, Given/When/Then acceptance criteria, notes, open questions) and adds each issue to a GitHub Projects board as Todo, without touching your working tree. |
+| `ship-issue` | `/ship-issue` | Ship one GitHub issue from a clean session: check it is ready, branch, reproduce/investigate, implement within scope, run the repo's own checks, and open a PR that closes the issue and maps each acceptance criterion to its evidence. Refuses epics, closed or blocked issues, and issues with open questions. |
 
 `sdd-init` → `sdd-plan` → `sdd-make` form the core workflow; `sdd-scan` is an
 out-of-band conformance check you run any time to catch drift, and `sdd-fix` is
@@ -120,7 +122,14 @@ sdd-skills/
 │   │   ├── SKILL.md
 │   │   └── assets/
 │   │       └── template.md   # canonical HANDOUT.md template
-│   └── sdd-query/
+│   ├── sdd-query/
+│   │   └── SKILL.md
+│   ├── new-issue/
+│   │   ├── SKILL.md
+│   │   └── assets/
+│   │       ├── issue.md      # issue / sub-issue body template
+│   │       └── epic.md       # epic body template
+│   └── ship-issue/
 │       └── SKILL.md
 ├── agents/
 │   ├── sdd-architect.md      # design reviewer; sdd-make/sdd-fix consult it

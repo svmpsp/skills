@@ -40,6 +40,8 @@ Each skill is a directory under `skills/` whose entry point is `SKILL.md`
 | `skills/sdd-fix/` | Debug: reproduce a bug and prove its root cause, then hand off to `sdd-plan` (or straight to `sdd-make` for a small fix). |
 | `skills/sdd-handout/` | Carry work across sessions via a transient `HANDOUT.md`. |
 | `skills/sdd-query/` | Answer a question grounded in the code and `specs/`; read-only. |
+| `skills/new-issue/` | Record settled work as self-contained GitHub issues (or an epic with sub-issues) on a Projects board; works in any repo. |
+| `skills/ship-issue/` | Implement one GitHub issue from a clean session and open a PR that closes it; works in any repo. |
 
 The skills form a workflow: `sdd-init` → `sdd-plan` → `sdd-make`, with
 `sdd-scan` as an out-of-band conformance check feeding fixes to `sdd-make`, and
@@ -47,7 +49,8 @@ The skills form a workflow: `sdd-init` → `sdd-plan` → `sdd-make`, with
 small fix). `sdd-handout` spans
 a session boundary in whichever phase the work is in. `sdd-query` is an
 out-of-band research entry point that can point to `sdd-scan`, `sdd-fix`, or
-`sdd-plan`.
+`sdd-plan`. `new-issue` and `ship-issue` are general-purpose and need no
+`specs/`: one records work as GitHub issues, the other ships one as a PR.
 
 ## Components — the agents
 
